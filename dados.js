@@ -31,6 +31,16 @@ const DADOS = {
     { nome: "GitHub", url: "https://github.com/gabrielsoares97" },
   ],
 
+  // Música de fundo em loop. Começa desligada: o visitante liga no alto-falante do topo.
+  // Coloque os arquivos na pasta musica/. "noite" é opcional e toca no modo noite.
+  // loop (opcional): o trecho que se repete, em segundos [início, fim]. Serve para pular um final que
+  // acaba em fade ou silêncio; o fim precisa cair no começo de um compasso. Sem loop, a música inteira se repete.
+  // Com "dia" vazio, o alto-falante só liga e desliga os efeitos sonoros.
+  musica: {
+    dia: { arquivo: "musica/dia.mp3", loop: [0.075, 48.075] }, // "Sunday Morning Save Point": 18 compassos a 90 BPM
+    noite: { arquivo: "musica/noite.mp3", loop: [0.077, 51.277] }, // "Midnight Overworld": 16 compassos a 75 BPM
+  },
+
   // preco é opcional: ex.: "a partir de R$ 1.500". Vazio esconde a linha de preço.
   // O botão abre o WhatsApp (o primeiro link chamado "WhatsApp") já com o nome do serviço na mensagem.
   servicos: [

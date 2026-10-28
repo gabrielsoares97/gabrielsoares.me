@@ -207,9 +207,111 @@ a { color: inherit; }
 .som:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--contorno); }
 .som:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--contorno); }
 .som svg { width: 20px; height: 20px; fill: currentColor; }
-.som[aria-pressed="true"] { background: var(--moeda); color: #1a1446; }
-.som[aria-pressed="true"] .som-desligado,
-.som[aria-pressed="false"] .som-ligado { display: none; }
+/* data-ligado: algum som (efeitos ou música) está ligado */
+#som[data-ligado="true"] { background: var(--moeda); color: #1a1446; }
+#som[data-ligado="true"] .som-desligado,
+#som[data-ligado="false"] .som-ligado { display: none; }
+
+/* Menu do alto-falante (quando o site tem música): uma chave para os efeitos, outra para a música */
+.menu-som {
+  position: fixed;
+  inset: auto; /* o script coloca o menu logo abaixo do alto-falante */
+  margin: 0;
+  padding: 6px;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2px solid var(--contorno);
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+}
+.menu-som-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: inherit;
+  font: 600 0.95rem/1.2 var(--fonte-texto);
+  white-space: nowrap;
+}
+.menu-som-item:hover { background: color-mix(in srgb, var(--moeda) 20%, transparent); }
+/* Chave liga/desliga de pixel: quadradinho que anda para a direita e fica verde */
+.menu-som-item i {
+  position: relative;
+  flex: none;
+  width: 38px;
+  height: 22px;
+  background: color-mix(in srgb, var(--tinta) 14%, var(--papel));
+  border: 2px solid var(--contorno);
+  border-radius: 4px;
+}
+.menu-som-item i::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 12px;
+  height: 12px;
+  background: var(--contorno);
+  transition: transform 0.12s steps(3);
+}
+.menu-som-item[aria-checked="true"] i { background: var(--grama); }
+.menu-som-item[aria-checked="true"] i::after { background: #ffffff; transform: translateX(16px); }
+/* Baixando a música: a chave pisca */
+.menu-som-item[aria-busy="true"] i { animation: luz 0.6s steps(2) infinite; }
+
+/* Volume da música: barra de pixel que enche de verde (--nivel vem do script), com um bloquinho de moeda para arrastar */
+.menu-som-volume {
+  display: grid;
+  gap: 4px;
+  padding: 4px 12px 10px;
+  color: var(--tinta-suave);
+  font: 600 0.85rem/1.2 var(--fonte-texto);
+}
+.menu-som-volume input {
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: none;
+  cursor: var(--cursor-clique);
+  -webkit-appearance: none;
+  appearance: none;
+}
+.menu-som-volume input:disabled { opacity: 0.4; cursor: var(--cursor); }
+.menu-som-volume input::-webkit-slider-runnable-track {
+  height: 12px;
+  border: 2px solid var(--contorno);
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--grama) var(--nivel, 50%), color-mix(in srgb, var(--tinta) 14%, var(--papel)) var(--nivel, 50%));
+}
+.menu-som-volume input::-webkit-slider-thumb {
+  width: 14px;
+  height: 22px;
+  margin-top: -7px;
+  background: var(--moeda);
+  border: 2px solid var(--contorno);
+  border-radius: 2px;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.menu-som-volume input::-moz-range-track {
+  height: 8px;
+  border: 2px solid var(--contorno);
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--tinta) 14%, var(--papel));
+}
+.menu-som-volume input::-moz-range-progress { height: 8px; background: var(--grama); }
+.menu-som-volume input::-moz-range-thumb {
+  width: 10px;
+  height: 18px;
+  background: var(--moeda);
+  border: 2px solid var(--contorno);
+  border-radius: 2px;
+}
 
 /* Dia/noite: sol dourado de dia, lua amarela à noite */
 .tema,

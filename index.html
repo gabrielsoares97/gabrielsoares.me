@@ -91,7 +91,7 @@
   <link rel="preload" href="fontes/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="fontes/figtree.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="foto.jpg" as="image" fetchpriority="high">
-  <link rel="stylesheet" href="style.css?v=2026-10-28">
+  <link rel="stylesheet" href="style.css?v=2026-10-28-volume">
   <!-- Aplica o tema dia/noite escolhido antes da página aparecer, para não piscar -->
   <script>try { var t = localStorage.getItem("gs-tema"); if (t) document.documentElement.dataset.tema = t; } catch (e) {}</script>
 </head>
@@ -128,7 +128,7 @@
       <span id="hud-num">0/0</span>
     </button>
     <button type="button" class="som tema" id="tema" aria-pressed="false" aria-label="Modo noite" title="Trocar entre dia e noite"></button>
-    <button type="button" class="som" id="som" aria-pressed="true" aria-label="Efeitos sonoros" title="Ligar ou desligar os sons">
+    <button type="button" class="som" id="som" aria-pressed="true" data-ligado="true" aria-label="Efeitos sonoros" title="Ligar ou desligar os sons">
       <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
         <path d="M1 4h2v4H1zM3 3h1v6H3zM4 2h1v8H4zM5 1h1v10H5z" />
         <path class="som-ligado" d="M7 5h1v2H7zM9 3h1v1H9zM10 4h1v4h-1zM9 8h1v1H9z" />
@@ -136,6 +136,16 @@
       </svg>
     </button>
   </header>
+
+  <!-- Menu do alto-falante, quando o site tem música (DADOS.musica): efeitos e música, cada um com sua chave -->
+  <div class="menu-som" id="menu-som" popover aria-label="Som">
+    <button type="button" class="menu-som-item" id="alternar-efeitos" role="switch" aria-checked="true">Efeitos sonoros <i aria-hidden="true"></i></button>
+    <button type="button" class="menu-som-item" id="alternar-musica" role="switch" aria-checked="false">Música de fundo <i aria-hidden="true"></i></button>
+    <label class="menu-som-volume">
+      <span>Volume da música</span>
+      <input type="range" id="volume-musica" min="0" max="100" step="5" value="50">
+    </label>
+  </div>
 
   <main id="conteudo">
     <section class="hero" id="inicio">
@@ -398,8 +408,8 @@
 
   <div class="toasts" id="toasts" aria-live="polite" popover="manual"></div>
 
-  <script src="dados.js?v=2026-10-28"></script>
-  <script src="ceu.js?v=2026-10-28"></script>
-  <script src="script.js?v=2026-10-28"></script>
+  <script src="dados.js?v=2026-10-28-volume"></script>
+  <script src="ceu.js?v=2026-10-28-volume"></script>
+  <script src="script.js?v=2026-10-28-volume"></script>
 </body>
 </html>

@@ -105,28 +105,156 @@
   };
   const iconeRede = (nome) => (ICONES_REDE[nome] ? pixelSvg(ICONES_REDE[nome]) : "");
 
-  /* ---------- Sons 8-bit, gerados na hora pelo navegador (sem arquivos de áudio) ---------- */
+  /* ---------- Sons 8-bit, gerados na hora pelo navegador, e a música de fundo ---------- */
   const botaoSom = $("som");
   const som = (() => {
     let ctx = null;
-    let ligado = true;
+    let ligado = true; // efeitos sonoros
+    let musicaLigada = false; // a música começa desligada: só toca se o visitante pedir
+    let volume = 50; // volume da música, de 0 a 100, no controle do menu de som
     try {
       ligado = localStorage.getItem("gs-som") !== "desligado";
+      musicaLigada = localStorage.getItem("gs-musica") === "ligada";
+      const salvo = localStorage.getItem("gs-volume");
+      if (salvo !== null && Number(salvo) >= 0 && Number(salvo) <= 100) volume = Number(salvo);
     } catch {
-      // sem armazenamento: começa ligado
+      // sem armazenamento: efeitos ligados, música desligada, volume no meio
     }
 
-    // Navegadores só liberam áudio depois de um clique, toque ou tecla
+    // Navegadores só liberam áudio depois de um clique, toque ou tecla.
+    // Quem deixou a música ligada na última visita ouve de novo a partir do primeiro clique.
     function acordar() {
       if (!ctx) {
         const Contexto = window.AudioContext || window.webkitAudioContext;
         if (!Contexto) return;
         ctx = new Contexto();
       }
-      if (ctx.state === "suspended") ctx.resume();
+      if (ctx.state === "suspended") ctx.resume().then(tocarMusica);
+      else tocarMusica();
     }
     addEventListener("pointerdown", acordar, { capture: true, passive: true });
     addEventListener("keydown", acordar, { capture: true });
+
+    /* Música de fundo: arquivo em loop, sem emenda (Web Audio repete o trecho exato, sem silêncio entre as voltas) */
+    // Cada faixa pode ser só o endereço ou { arquivo, loop: [início, fim] } (veja o dados.js).
+    // A chave da música fica num menu (popover); navegador sem popover fica só com os efeitos.
+    const comoFaixa = (f) => (typeof f === "string" ? { arquivo: f } : f || {});
+    const faixaDia = comoFaixa(d.musica?.dia);
+    const faixaNoite = comoFaixa(d.musica?.noite);
+    const faixas =
+      faixaDia.arquivo && "popover" in HTMLElement.prototype ? { dia: faixaDia, noite: faixaNoite.arquivo ? faixaNoite : faixaDia } : null;
+    const carregadas = {}; // arquivo -> promessa de { audio, nivel } pronto para o loop (baixa só uma vez, e só quem liga)
+    let tocando = null; // { fonte, ganho, url, nivel }
+
+    // O ouvido percebe volume em curva: o controle vai ao quadrado para o meio do caminho soar como "metade".
+    // nivel iguala as faixas: sem ele, uma música gravada mais alta tocaria bem mais forte que a outra.
+    const VOLUME_MAXIMO = 0.5;
+    const ganhoAlvo = (nivel) => VOLUME_MAXIMO * (volume / 100) ** 2 * nivel;
+    const RMS_ALVO = 0.2; // "altura" média que toda faixa passa a ter antes do volume do visitante
+
+    function medirNivel(audio) {
+      const dados = audio.getChannelData(0);
+      let soma = 0;
+      let n = 0;
+      for (let i = 0; i < dados.length; i += 16) {
+        soma += dados[i] * dados[i];
+        n++;
+      }
+      const rms = Math.sqrt(soma / n) || RMS_ALVO;
+      return Math.min(2, Math.max(0.25, RMS_ALVO / rms));
+    }
+
+    const noite = () => {
+      const tema = document.documentElement.dataset.tema;
+      return tema ? tema === "escuro" : matchMedia("(prefers-color-scheme: dark)").matches;
+    };
+    const faixaDaVez = () => (noite() ? faixas.noite : faixas.dia);
+
+    // Recorta o trecho do loop. Os primeiros 50 ms depois do fim entram por cima do começo, sumindo:
+    // a onda continua sem degrau na volta, então a emenda não faz "tique".
+    function prepararLoop(audio, [inicio, fim] = []) {
+      if (inicio === undefined) return audio;
+      const r = audio.sampleRate;
+      const a = Math.round(inicio * r);
+      const b = Math.min(Math.round(fim * r), audio.length);
+      const cauda = Math.min(Math.round(r * 0.05), audio.length - b);
+      const trecho = ctx.createBuffer(audio.numberOfChannels, b - a, r);
+      for (let canal = 0; canal < audio.numberOfChannels; canal++) {
+        const de = audio.getChannelData(canal);
+        const para = trecho.getChannelData(canal);
+        para.set(de.subarray(a, b));
+        for (let i = 0; i < cauda; i++) para[i] += de[b + i] * (1 - i / cauda);
+      }
+      return trecho;
+    }
+
+    function carregar(faixa) {
+      carregadas[faixa.arquivo] ||= fetch(faixa.arquivo)
+        .then((r) => {
+          if (!r.ok) throw new Error(`música não encontrada: ${faixa.arquivo}`);
+          return r.arrayBuffer();
+        })
+        .then((dados) => ctx.decodeAudioData(dados))
+        .then((audio) => {
+          const trecho = prepararLoop(audio, faixa.loop);
+          return { audio: trecho, nivel: medirNivel(trecho) };
+        });
+      return carregadas[faixa.arquivo];
+    }
+
+    function pararMusica(segundos = 1) {
+      if (!tocando) return;
+      const { fonte, ganho } = tocando;
+      const t = ctx.currentTime;
+      ganho.gain.cancelScheduledValues(t);
+      ganho.gain.setValueAtTime(ganho.gain.value, t);
+      ganho.gain.linearRampToValueAtTime(0, t + segundos);
+      fonte.stop(t + segundos + 0.05);
+      tocando = null;
+    }
+
+    // Toca a faixa do dia ou da noite; se o tema mudou, a anterior sai devagar enquanto a nova entra
+    async function tocarMusica() {
+      if (!faixas || !musicaLigada || !ctx || ctx.state !== "running") return;
+      const faixa = faixaDaVez();
+      const url = faixa.arquivo;
+      if (tocando?.url === url) return;
+      botaoMusica.setAttribute("aria-busy", "true");
+      let audio;
+      let nivel;
+      try {
+        ({ audio, nivel } = await carregar(faixa));
+      } catch (erro) {
+        console.warn(erro);
+        delete carregadas[url];
+        musicaLigada = false;
+        mostrarBotao();
+        return;
+      } finally {
+        botaoMusica.removeAttribute("aria-busy");
+      }
+      // Enquanto baixava, o visitante pode ter desligado, trocado o tema ou já começado a tocar
+      if (!musicaLigada || faixaDaVez().arquivo !== url || tocando?.url === url) return;
+      pararMusica();
+      const fonte = ctx.createBufferSource();
+      const ganho = ctx.createGain();
+      fonte.buffer = audio;
+      fonte.loop = true;
+      ganho.gain.setValueAtTime(0, ctx.currentTime);
+      ganho.gain.linearRampToValueAtTime(ganhoAlvo(nivel), ctx.currentTime + 2); // entra devagar
+      fonte.connect(ganho).connect(ctx.destination);
+      fonte.start();
+      tocando = { fonte, ganho, url, nivel };
+    }
+
+    addEventListener("gs:tema", tocarMusica);
+    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", tocarMusica);
+    // Em outra aba, o som pausa e volta do mesmo ponto
+    document.addEventListener("visibilitychange", () => {
+      if (!ctx || !tocando) return;
+      if (document.hidden) ctx.suspend();
+      else ctx.resume();
+    });
 
     // Uma nota: frequência inicial, quando começa, quanto dura, forma de onda, volume e frequência final
     function nota(freq, t0, duracao, { onda = "square", volume = 0.05, ate } = {}) {
@@ -165,37 +293,105 @@
       fimDeJogo: (t) => [523, 415, 330, 262].forEach((f, i) => nota(f, t + i * 0.13, i === 3 ? 0.45 : 0.12, { onda: "triangle", volume: 0.09 })),
     };
 
+    // Alto-falante com ondas se algum som estiver ligado; com música, as chaves do menu mostram cada um.
+    // O controle de volume só funciona com a música ligada.
+    const botaoEfeitos = $("alternar-efeitos");
+    const botaoMusica = $("alternar-musica");
+    const controleVolume = $("volume-musica");
     function mostrarBotao() {
-      botaoSom.setAttribute("aria-pressed", String(ligado));
+      botaoSom.dataset.ligado = String(ligado || musicaLigada);
+      if (faixas) {
+        botaoEfeitos.setAttribute("aria-checked", String(ligado));
+        botaoMusica.setAttribute("aria-checked", String(musicaLigada));
+        controleVolume.disabled = !musicaLigada;
+        controleVolume.value = volume;
+        controleVolume.style.setProperty("--nivel", `${volume}%`);
+        controleVolume.setAttribute("aria-valuetext", `${volume}%`);
+      } else {
+        botaoSom.setAttribute("aria-pressed", String(ligado));
+      }
     }
     mostrarBotao();
 
+    function salvar(chave, valor) {
+      try {
+        localStorage.setItem(chave, valor);
+      } catch {
+        // sem armazenamento: vale só nesta visita
+      }
+    }
+
     return {
+      temMusica: Boolean(faixas),
+      get efeitos() {
+        return ligado;
+      },
+      get musica() {
+        return musicaLigada;
+      },
       tocar(nome) {
         if (!ligado || !ctx || ctx.state !== "running") return;
         EFEITOS[nome](ctx.currentTime + 0.01);
       },
       alternar() {
         ligado = !ligado;
-        try {
-          localStorage.setItem("gs-som", ligado ? "ligado" : "desligado");
-        } catch {
-          // idem
-        }
+        salvar("gs-som", ligado ? "ligado" : "desligado");
         mostrarBotao();
         this.tocar("blip");
+      },
+      alternarMusica() {
+        if (!faixas) return;
+        musicaLigada = !musicaLigada;
+        salvar("gs-musica", musicaLigada ? "ligada" : "desligada");
+        mostrarBotao();
+        if (musicaLigada) tocarMusica();
+        else pararMusica();
+      },
+      definirVolume(novo) {
+        volume = Math.min(100, Math.max(0, novo));
+        salvar("gs-volume", String(volume));
+        mostrarBotao();
+        if (!tocando) return;
+        const g = tocando.ganho.gain;
+        const t = ctx.currentTime;
+        g.cancelScheduledValues(t);
+        g.setValueAtTime(g.value, t);
+        g.linearRampToValueAtTime(ganhoAlvo(tocando.nivel), t + 0.08); // muda rápido, mas sem estalo
       },
     };
   })();
 
-  botaoSom.addEventListener("click", () => som.alternar());
+  // Sem música, o alto-falante liga e desliga os efeitos. Com música, abre o menu com as duas chaves.
+  const menuSom = $("menu-som");
+  if (som.temMusica) {
+    botaoSom.removeAttribute("aria-pressed");
+    botaoSom.setAttribute("aria-label", "Som e música");
+    botaoSom.title = "Efeitos sonoros e música de fundo";
+    botaoSom.setAttribute("popovertarget", "menu-som");
+    // O menu abre logo abaixo do alto-falante
+    menuSom.addEventListener("beforetoggle", (e) => {
+      if (e.newState !== "open") return;
+      const r = botaoSom.getBoundingClientRect();
+      menuSom.style.top = `${Math.round(r.bottom + 10)}px`;
+      menuSom.style.right = `${Math.round(document.documentElement.clientWidth - r.right)}px`;
+    });
+    $("alternar-efeitos").addEventListener("click", () => som.alternar());
+    $("alternar-musica").addEventListener("click", () => {
+      som.alternarMusica();
+      som.tocar("blip");
+    });
+    $("volume-musica").addEventListener("input", (e) => som.definirVolume(Number(e.target.value)));
+  } else {
+    menuSom.remove();
+    botaoSom.addEventListener("click", () => som.alternar());
+  }
 
   // Clique comum em link ou botão faz "blip"; os que têm som próprio ficam de fora.
   // Também é aqui que saem as conquistas de abrir o Instagram e de pedir orçamento.
   document.addEventListener("click", (e) => {
     const alvo = e.target.closest("a, button");
     if (!alvo) return;
-    if (!alvo.matches("#som, #tema, #like, [data-projeto], .modal-fechar, #hud, #ver-conquistas, .moeda-escondida, [data-jogo], [data-opcao], #abrir-terminal")) {
+    if (!alvo.matches("#som, .menu-som-item, #tema, #like, [data-projeto], .modal-fechar, #hud, #ver-conquistas, .moeda-escondida, [data-jogo], [data-opcao], #abrir-terminal")) {
       som.tocar("blip");
     }
     if (alvo.href?.includes("instagram.com")) desbloquear("instagram");
@@ -1777,10 +1973,18 @@
       },
     },
     som: {
-      desc: "liga ou desliga os sons",
+      desc: "liga ou desliga os efeitos sonoros",
       fn: () => {
         som.alternar();
-        return botaoSom.getAttribute("aria-pressed") === "true" ? "Som ligado. 🔊" : "Som desligado. 🔇";
+        return som.efeitos ? "Efeitos ligados. 🔊" : "Efeitos desligados. 🔇";
+      },
+    },
+    musica: {
+      desc: som.temMusica ? "liga ou desliga a música de fundo" : undefined, // sem música, fica fora da ajuda
+      fn: () => {
+        if (!som.temMusica) return "Ainda não tem música por aqui. Em breve! 🎵";
+        som.alternarMusica();
+        return som.musica ? "Música ligada. 🎵" : "Música desligada.";
       },
     },
     limpar: {
@@ -1802,7 +2006,7 @@
   const APELIDOS = {
     help: "ajuda", "?": "ajuda", comandos: "ajuda", clear: "limpar", cls: "limpar", exit: "sair", quit: "sair",
     about: "sobre", whatsapp: "contratar", orcamento: "contratar", hire: "contratar", trofeus: "conquistas",
-    jogo: "jogar", play: "jogar", theme: "tema", diario: "blog", posts: "blog", ola: "oi", hello: "oi", hi: "oi", coffee: "cafe", date: "data", dir: "ls",
+    jogo: "jogar", play: "jogar", theme: "tema", music: "musica", diario: "blog", posts: "blog", ola: "oi", hello: "oi", hi: "oi", coffee: "cafe", date: "data", dir: "ls",
   };
 
   function escrever(html, classe = "") {

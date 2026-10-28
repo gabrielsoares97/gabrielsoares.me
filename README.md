@@ -12,6 +12,7 @@ Meu site pessoal e portfólio, com cara de jogo 8-bit. No ar em **[gabrielsoares
 - **Moedas escondidas** pela página e um contador de likes compartilhado entre todos os visitantes.
 - **Fase bônus "Bug em produção"**: um minijogo de nave desenhado em canvas.
 - **Sons 8-bit** gerados na hora pela Web Audio API, sem arquivos de áudio.
+- **Música de fundo em loop**, uma para o dia e outra para a noite. Começa desligada; o visitante liga no alto-falante do topo (ou com `musica` no terminal) e o site lembra a escolha. O arquivo só é baixado por quem liga.
 - **Dia e noite**: nuvens de pixel no modo claro, estrelas no escuro.
 - **Blog "Diário de bordo"**: posts escritos em texto simples (Markdown) e transformados em páginas pelo `gerar-blog.js`, com feed RSS e a conquista secreta "Leitor de bordo".
 - **SEO local**: dados estruturados (schema.org), sitemap e robots.txt.
@@ -50,6 +51,12 @@ HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Um pouco de PH
    ```
 
 5. Suba para o servidor a pasta `blog/`, o `index.html` e o `sitemap.xml`. A pasta `posts/` não precisa ir.
+
+## Trocando a música de fundo
+
+1. Coloque o MP3 na pasta `musica/`.
+2. Em `dados.js`, aponte `musica.dia` (e, se quiser, `musica.noite`) para o arquivo.
+3. Se a música termina em fade ou silêncio, preencha `loop` com o trecho que se repete, em segundos. O fim precisa cair no começo de um compasso, no mesmo ponto da música em que o trecho começa. Para achar o tamanho de um compasso, divida 240 pelo BPM: a 90 BPM, um compasso dura 2,67 s.
 
 ## Rodando localmente
 
