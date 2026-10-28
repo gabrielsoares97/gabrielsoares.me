@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Criação de sites e sistemas em Balneário Piçarras | Gabriel Soares</title>
+  <meta name="description" content="Desenvolvedor full-stack em Balneário Piçarras, SC. Crio sites institucionais, landing pages, sistemas web e apps para empresas de Piçarras, Itajaí, Navegantes, Penha e região. Peça seu orçamento.">
+  <link rel="canonical" href="https://gabrielsoares.me/">
+  <meta name="robots" content="index, follow">
+  <meta name="author" content="Gabriel Soares">
+  <meta name="theme-color" content="#ffc531">
+  <meta name="color-scheme" content="light dark">
+
+  <!-- Prévia do link no WhatsApp, Instagram, LinkedIn etc. -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_BR">
+  <meta property="og:site_name" content="Gabriel Soares">
+  <meta property="og:url" content="https://gabrielsoares.me/">
+  <meta property="og:title" content="Gabriel Soares | Criação de sites e sistemas">
+  <meta property="og:description" content="Sites, landing pages, sistemas web e apps para empresas de Balneário Piçarras e região. Mais de 20 projetos entregues.">
+  <meta property="og:image" content="https://gabrielsoares.me/logo/gabriel-soares-lockup.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="500">
+  <meta property="og:image:alt" content="Logo Gabriel Soares">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Gabriel Soares | Criação de sites e sistemas">
+  <meta name="twitter:description" content="Sites, landing pages, sistemas web e apps para empresas de Balneário Piçarras e região.">
+  <meta name="twitter:image" content="https://gabrielsoares.me/logo/gabriel-soares-lockup.png">
+
+  <!-- Dados estruturados: ajudam o Google a entender quem você é, o que oferece e onde atende -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://gabrielsoares.me/#negocio",
+        "name": "Gabriel Soares | Desenvolvimento web",
+        "url": "https://gabrielsoares.me/",
+        "logo": "https://gabrielsoares.me/logo/gabriel-soares-icon.png",
+        "image": "https://gabrielsoares.me/foto.jpg",
+        "description": "Criação de sites institucionais, landing pages, sistemas web e aplicativos para empresas.",
+        "email": "contato@gabrielsoares.me",
+        "telephone": "+55 47 99220-1382",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Balneário Piçarras",
+          "addressRegion": "SC",
+          "addressCountry": "BR"
+        },
+        "areaServed": [
+          { "@type": "City", "name": "Balneário Piçarras" },
+          { "@type": "City", "name": "Itajaí" },
+          { "@type": "City", "name": "Navegantes" },
+          { "@type": "City", "name": "Penha" },
+          { "@type": "City", "name": "Balneário Camboriú" },
+          { "@type": "Country", "name": "Brasil" }
+        ],
+        "founder": { "@id": "https://gabrielsoares.me/#gabriel" },
+        "hasOfferCatalog": {
+          "@type": "OfferCatalog",
+          "name": "Serviços",
+          "itemListElement": [
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Criação de site institucional" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Landing page" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Sistema web sob medida" } },
+            { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Aplicativo para celular" } }
+          ]
+        }
+      },
+      {
+        "@type": "Person",
+        "@id": "https://gabrielsoares.me/#gabriel",
+        "name": "Gabriel Soares",
+        "jobTitle": "Desenvolvedor full-stack",
+        "url": "https://gabrielsoares.me/",
+        "image": "https://gabrielsoares.me/foto.jpg",
+        "sameAs": [
+          "https://www.instagram.com/ogabrielsoares.dev/",
+          "https://github.com/gabrielsoares97",
+          "https://www.linkedin.com/in/gabriel-gracie/"
+        ]
+      }
+    ]
+  }
+  </script>
+  <link rel="icon" type="image/png" sizes="48x48" href="logo/favicon.png">
+  <link rel="apple-touch-icon" href="logo/favicon.png">
+  <link rel="preload" href="fontes/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fontes/figtree.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="foto.jpg" as="image" fetchpriority="high">
+  <link rel="stylesheet" href="style.css?v=2026-10-27b">
+  <!-- Aplica o tema dia/noite escolhido antes da página aparecer, para não piscar -->
+  <script>try { var t = localStorage.getItem("gs-tema"); if (t) document.documentElement.dataset.tema = t; } catch (e) {}</script>
+</head>
+<body>
+  <a class="pular" href="#conteudo">Pular para o conteúdo</a>
+  <canvas class="fundo" id="fundo" aria-hidden="true"></canvas>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="selo-gs" viewBox="60 33 406 462">
+      <path d="M256 47 438 152v208L256 465 74 360V152Z" fill="#1A1446" stroke="#1A1446" stroke-width="18" stroke-linejoin="round" transform="translate(14 16)"/>
+      <path d="M256 47 438 152v208L256 465 74 360V152Z" fill="#FFC531" stroke="#1A1446" stroke-width="18" stroke-linejoin="round"/>
+      <path d="M256 94 397 175v162l-141 81-141-81V175Z" fill="#DBE5FF" stroke="#1A1446" stroke-width="12" stroke-linejoin="round"/>
+      <path d="M371 112h16v16h16v16h-16v16h-16v-16h-16v-16h16Z" fill="#17A35F" stroke="#1A1446" stroke-width="8" stroke-linejoin="round"/>
+      <text x="256" y="335" text-anchor="middle" fill="#1A1446" font-family="Bricolage Grotesque, Arial, sans-serif" font-size="190" font-weight="800" letter-spacing="-18">GS</text>
+      <path d="M122 212h22M368 212h22M122 300h22M368 300h22" stroke="#FF5A6E" stroke-width="10" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <header class="topo">
+    <a class="marca" href="#inicio">
+      <svg class="selo" aria-hidden="true"><use href="#selo-gs" /></svg>
+      <span id="marca">Gabriel Soares</span>
+    </a>
+    <nav aria-label="Seções">
+      <a href="#servicos">Serviços</a>
+      <a href="#conquistas">Conquistas</a>
+      <a href="#projetos">Projetos</a>
+      <a href="#jornada" class="so-largo">Jornada</a>
+      <a href="#jogo">Jogar</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <button type="button" class="hud" id="hud" aria-haspopup="dialog" title="Suas conquistas neste site">
+      <span class="hud-icone" id="hud-icone"></span>
+      <span id="hud-num">0/0</span>
+    </button>
+    <button type="button" class="som tema" id="tema" aria-pressed="false" aria-label="Modo noite" title="Trocar entre dia e noite"></button>
+    <button type="button" class="som" id="som" aria-pressed="true" aria-label="Efeitos sonoros" title="Ligar ou desligar os sons">
+      <svg viewBox="0 0 12 12" aria-hidden="true" shape-rendering="crispEdges">
+        <path d="M1 4h2v4H1zM3 3h1v6H3zM4 2h1v8H4zM5 1h1v10H5z" />
+        <path class="som-ligado" d="M7 5h1v2H7zM9 3h1v1H9zM10 4h1v4h-1zM9 8h1v1H9z" />
+        <path class="som-desligado" d="M7 4h1v1H7zM8 5h1v1H8zM9 6h1v1H9zM10 7h1v1h-1zM10 4h1v1h-1zM9 5h1v1H9zM8 6h1v1H8zM7 7h1v1H7z" />
+      </svg>
+    </button>
+  </header>
+
+  <main id="conteudo">
+    <section class="hero" id="inicio">
+      <div class="hero-texto">
+        <p class="status" id="status"></p>
+        <h1 id="hero-titulo">Oi, eu sou Gabriel.</h1>
+        <p class="hero-resumo" id="hero-resumo"></p>
+        <div class="acoes" id="hero-acoes">
+          <a class="botao primario" href="#projetos">Ver projetos</a>
+          <a class="botao" href="#contato">Falar comigo</a>
+        </div>
+      </div>
+
+      <div class="hero-lado">
+      <figure class="retrato" id="retrato"></figure>
+
+      <aside class="ficha" aria-label="Ficha de jogador">
+        <div class="ficha-topo">
+          <div class="avatar" id="avatar" aria-hidden="true"></div>
+          <div>
+            <p class="ficha-nome" id="ficha-nome"></p>
+            <p class="ficha-classe" id="ficha-classe"></p>
+          </div>
+        </div>
+        <div class="nivel">
+          <div class="nivel-linha">
+            <span class="nivel-num" id="nivel-num"></span>
+            <span class="nivel-dica" id="nivel-dica"></span>
+          </div>
+          <div class="xp" role="progressbar" aria-label="Experiência até o próximo nível" aria-valuemin="0" aria-valuemax="100" id="xp">
+            <div class="xp-barra" id="xp-barra"></div>
+          </div>
+        </div>
+        <dl class="stats">
+          <div><dt>Conquistas</dt><dd id="stat-conquistas"></dd></div>
+          <div><dt>Projetos</dt><dd id="stat-projetos"></dd></div>
+          <div><dt>Base</dt><dd id="stat-base"></dd></div>
+        </dl>
+      </aside>
+      </div>
+
+      <a class="comecar" href="#sobre">
+        <span>Role para começar</span>
+        <svg viewBox="0 0 7 5" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0Z" /></svg>
+      </a>
+    </section>
+
+    <section class="secao sobre tem-moeda" id="sobre" aria-labelledby="t-sobre">
+      <div>
+        <p class="olho">Mundo 1-1</p>
+        <h2 id="t-sobre">Sobre mim</h2>
+      </div>
+      <div class="sobre-texto" id="sobre-texto"></div>
+    </section>
+
+    <section class="secao" id="servicos" aria-labelledby="t-servicos">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-2</p>
+          <h2 id="t-servicos">Serviços</h2>
+        </div>
+        <p>Escolha a sua missão. Atendo Balneário Piçarras, Itajaí, Navegantes, Penha e região, e clientes de todo o Brasil pela internet.</p>
+      </div>
+      <ul class="servicos" id="lista-servicos"></ul>
+    </section>
+
+    <section class="secao" id="processo" aria-labelledby="t-processo">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-3</p>
+          <h2 id="t-processo">Como funciona</h2>
+        </div>
+        <p>Do primeiro “oi” ao projeto no ar, a missão tem quatro etapas. Em todas elas, você fala direto comigo.</p>
+      </div>
+      <ol class="etapas" id="lista-processo"></ol>
+    </section>
+
+    <section class="secao" id="conquistas" aria-labelledby="t-conquistas">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-4</p>
+          <h2 id="t-conquistas">Conquistas</h2>
+        </div>
+        <p id="conquistas-contagem"></p>
+      </div>
+      <ul class="conquistas" id="lista-conquistas"></ul>
+    </section>
+
+    <section class="secao" id="projetos" aria-labelledby="t-projetos">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-5</p>
+          <h2 id="t-projetos">Projetos</h2>
+        </div>
+        <p>Coisas que construí e coloquei no mundo.</p>
+      </div>
+      <div class="projetos" id="lista-projetos"></div>
+    </section>
+
+    <section class="secao tem-moeda" id="jornada" aria-labelledby="t-jornada">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-6</p>
+          <h2 id="t-jornada">Jornada na tecnologia</h2>
+        </div>
+        <p>Cada etapa foi uma fase. Esta é a ordem em que joguei.</p>
+      </div>
+      <ol class="fases" id="lista-jornada"></ol>
+    </section>
+
+    <section class="secao" id="inventario" aria-labelledby="t-inventario">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-7</p>
+          <h2 id="t-inventario">Inventário</h2>
+        </div>
+        <p>As ferramentas que levo para qualquer fase.</p>
+      </div>
+      <div class="inventario" id="lista-inventario"></div>
+    </section>
+
+    <section class="secao" id="jogo" aria-labelledby="t-jogo">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Fase bônus</p>
+          <h2 id="t-jogo">Bug em produção</h2>
+        </div>
+        <p>Pilote a nave GS e acerte os bugs antes que eles cheguem à produção. Pegue moedas e café pelo caminho.</p>
+      </div>
+      <div class="jogo" id="jogo-area">
+        <canvas class="jogo-tela" id="jogo-tela" aria-label="Jogo: a nave atira sozinha, você só desvia e mira"></canvas>
+        <div class="jogo-hud" aria-hidden="true">
+          <span>Pontos <strong id="jogo-pontos">0</strong> <em class="jogo-combo" id="jogo-combo"></em></span>
+          <span id="jogo-sprint">Sprint 1</span>
+          <span class="jogo-vidas" id="jogo-vidas"></span>
+        </div>
+        <div class="jogo-painel" id="jogo-painel" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="secao" id="perguntas" aria-labelledby="t-perguntas">
+      <div class="secao-cabeca">
+        <div>
+          <p class="olho">Mundo 1-8</p>
+          <h2 id="t-perguntas">Perguntas frequentes</h2>
+        </div>
+        <p>As dúvidas que mais aparecem antes de começar um projeto.</p>
+      </div>
+      <div class="perguntas" id="lista-perguntas"></div>
+    </section>
+
+    <section class="contato" id="contato" aria-labelledby="t-contato">
+      <p class="olho">Fase final</p>
+      <h2 id="t-contato">Bora construir algo juntos?</h2>
+      <p>Estou aberto a projetos, vagas e boas conversas sobre código.</p>
+      <div class="missao" id="missao"></div>
+      <p class="contato-ou">Ou, se preferir, por e-mail:</p>
+      <div class="contato-email">
+        <a id="email-link" class="email-grande" href="#"></a>
+        <div class="contato-email-acoes">
+          <button type="button" class="botao" id="copiar-email">Copiar e-mail</button>
+          <button type="button" class="botao" id="salvar-contato">Salvar contato</button>
+        </div>
+      </div>
+      <ul class="redes" id="lista-redes"></ul>
+    </section>
+  </main>
+
+  <footer class="rodape tem-moeda">
+    <p>
+      <span id="rodape-texto"></span>
+      <button type="button" class="botao-link terminal-botao" id="abrir-terminal" aria-haspopup="dialog" aria-keyshortcuts="Control+K" title="Atalho: Ctrl + K">&gt;_ Terminal</button>
+    </p>
+    <p class="rodape-dica">
+      <span id="rodape-dica">Tem conquista escondida por aqui.</span>
+      <button type="button" class="botao-link" id="ver-conquistas" aria-haspopup="dialog">Ver todas</button>
+    </p>
+  </footer>
+
+  <div class="progresso" id="progresso" aria-hidden="true"></div>
+
+  <dialog class="modal" id="modal-projeto" aria-labelledby="modal-titulo">
+    <div class="modal-corpo">
+      <button type="button" class="modal-fechar" id="modal-fechar" aria-label="Fechar">✕</button>
+      <div class="modal-galeria" id="modal-galeria"></div>
+      <h3 id="modal-titulo"></h3>
+      <p class="projeto-tipo" id="modal-tipo"></p>
+      <div class="modal-texto" id="modal-texto"></div>
+      <div id="modal-tags"></div>
+      <div class="modal-links" id="modal-links"></div>
+    </div>
+  </dialog>
+
+  <dialog class="modal" id="modal-trofeus" aria-labelledby="trofeus-titulo">
+    <div class="modal-corpo">
+      <button type="button" class="modal-fechar" data-fechar aria-label="Fechar">✕</button>
+      <p class="olho">Pausa</p>
+      <h3 id="trofeus-titulo">Suas conquistas</h3>
+      <p class="trofeus-resumo" id="trofeus-resumo"></p>
+      <div class="xp trofeus-barra" aria-hidden="true"><div class="xp-barra" id="trofeus-barra"></div></div>
+      <ul class="trofeus" id="lista-trofeus"></ul>
+      <div class="modal-links">
+        <button type="button" class="botao primario" id="compartilhar">Desafiar um amigo</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog class="modal terminal" id="modal-terminal" aria-label="Terminal">
+    <div class="modal-corpo">
+      <div class="terminal-barra" aria-hidden="true"><i></i><i></i><i></i><span>visitante@gabrielsoares.me</span></div>
+      <button type="button" class="modal-fechar" data-fechar aria-label="Fechar">✕</button>
+      <div class="terminal-saida" id="terminal-saida" role="log" aria-live="polite"></div>
+      <form class="terminal-form" id="terminal-form">
+        <label class="terminal-prompt" for="terminal-entrada">~$</label>
+        <input id="terminal-entrada" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="send" aria-label="Comando">
+      </form>
+    </div>
+  </dialog>
+
+  <button type="button" class="like" id="like" aria-label="Curtir o site">
+    <span class="like-icone" aria-hidden="true">👍</span>
+    <span class="like-num" id="like-num">…</span>
+  </button>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="dados.js?v=2026-10-27b"></script>
+  <script src="script.js?v=2026-10-27b"></script>
+</body>
+</html>

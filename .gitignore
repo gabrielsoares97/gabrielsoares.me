@@ -1,0 +1,18 @@
+# Pacotes antigos do site e do logo (o conteúdo já está nas pastas)
+*.zip
+
+# Contador de likes gravado pelo servidor
+api/likes.txt
+
+# Testes de ícone que o site não usa
+logo/gabriel-soares-icon-32px-check.png
+logo/gabriel-soares-icon-32px-check2.png
+logo/gabriel-soares-icon2.png
+
+# Configuração local do Claude Code
+.claude/
+
+# Sistema
+Thumbs.db
+desktop.ini
+.DS_Store

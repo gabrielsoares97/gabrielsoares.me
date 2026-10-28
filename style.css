@@ -1,0 +1,1296 @@
+/* ---------- Fontes (hospedadas no próprio site) ---------- */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("fontes/bricolage-grotesque.woff2") format("woff2");
+  font-weight: 500 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Figtree";
+  src: url("fontes/figtree.woff2") format("woff2");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Figtree";
+  src: url("fontes/figtree-italico.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* ---------- Tokens ---------- */
+:root {
+  --ceu: #dbe5ff;
+  --papel: #ffffff;
+  --tinta: #1a1446;
+  --tinta-suave: #4b4775;
+  --contorno: #1a1446;
+  --moeda: #ffc531;
+  --grama: #17a35f;
+  --cereja: #ff5a6e;
+
+  --comum: #6f7fa8;
+  --rara: #2f6fff;
+  --epica: #8a46ff;
+  --lendaria: #c98a00;
+
+  --sombra: 4px 4px 0 var(--contorno);
+  --sombra-grande: 8px 8px 0 var(--contorno);
+
+  --fonte-titulo: "Bricolage Grotesque", system-ui, sans-serif;
+  --fonte-texto: "Figtree", system-ui, sans-serif;
+
+  --largura: 1120px;
+  --gutter: clamp(16px, 4vw, 40px);
+
+  /* Cursores do sistema; a luva de pixel entra logo abaixo, só para mouse */
+  --cursor: auto;
+  --cursor-clique: pointer;
+}
+
+/* Luva de pixel: branca no normal, amarela sobre o que dá para clicar. 9 1 = ponta do dedo. */
+@media (pointer: fine) {
+  :root {
+    --cursor: url("cursor/mao.png") 9 1, auto;
+    --cursor-clique: url("cursor/mao-clique.png") 9 1, pointer;
+  }
+  @supports (cursor: image-set(url("cursor/mao.png") 1x) 0 0, auto) {
+    :root {
+      --cursor: image-set(url("cursor/mao.png") 1x, url("cursor/mao@2x.png") 2x) 9 1, auto;
+      --cursor-clique: image-set(url("cursor/mao-clique.png") 1x, url("cursor/mao-clique@2x.png") 2x) 9 1, pointer;
+    }
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ceu: #120e2b;
+    --papel: #1f1947;
+    --tinta: #efedff;
+    --tinta-suave: #b5b0de;
+    --contorno: #6a5cf0;
+    --comum: #9aa8cc;
+    --rara: #6f9bff;
+    --epica: #b48aff;
+    --lendaria: #ffc531;
+  }
+}
+
+/* ---------- Base ---------- */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+
+body {
+  margin: 0;
+  background: var(--ceu);
+  color: var(--tinta);
+  font-family: var(--fonte-texto);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  cursor: var(--cursor);
+}
+a, button, summary, label { cursor: var(--cursor-clique); }
+
+h1, h2, h3 {
+  font-family: var(--fonte-titulo);
+  line-height: 1.05;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+p { margin: 0; }
+a { color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--cereja);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Céu de fundo (nuvens de pixel / estrelas), desenhado pelo script.js.
+   100lvh: não muda de tamanho quando a barra do navegador do celular aparece e some. */
+.fundo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
+  pointer-events: none;
+}
+
+.pular {
+  position: absolute;
+  left: 16px;
+  top: -100px;
+  background: var(--moeda);
+  color: #1a1446;
+  padding: 8px 14px;
+  z-index: 100;
+  font-weight: 700;
+}
+.pular:focus { top: 12px; }
+
+/* ---------- Topo ---------- */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px var(--gutter);
+  background: color-mix(in srgb, var(--ceu) 88%, transparent);
+  backdrop-filter: blur(8px);
+  transition: box-shadow 0.2s;
+}
+.topo.rolado { box-shadow: 0 2px 0 var(--contorno); }
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--fonte-titulo);
+  font-weight: 800;
+  font-size: 1.25rem;
+  text-decoration: none;
+}
+
+.topo nav { display: flex; gap: clamp(10px, 2.5vw, 28px); margin-left: auto; }
+
+/* Botão de som: alto-falante de pixel, com ondas (ligado) ou X (desligado) */
+.som {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 2px solid var(--contorno);
+  border-radius: 50%;
+  background: var(--papel);
+  color: var(--tinta);
+  box-shadow: 2px 2px 0 var(--contorno);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.som:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--contorno); }
+.som:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--contorno); }
+.som svg { width: 20px; height: 20px; fill: currentColor; }
+.som[aria-pressed="true"] { background: var(--moeda); color: #1a1446; }
+.som[aria-pressed="true"] .som-desligado,
+.som[aria-pressed="false"] .som-ligado { display: none; }
+
+/* HUD: troféu com quantas conquistas secretas o visitante já achou. Abre o painel. */
+.hud {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 13px 0 10px;
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 800 0.92rem/1 var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+  box-shadow: 2px 2px 0 var(--contorno);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.hud:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--contorno); }
+.hud:active { transform: translate(2px, 2px); box-shadow: 0 0 0 var(--contorno); }
+.hud-icone { display: grid; width: 17px; color: var(--lendaria); }
+.hud-icone svg { width: 100%; height: auto; fill: currentColor; }
+.hud.ganhou { animation: hud-ganhou 0.6s steps(4); }
+@keyframes hud-ganhou {
+  30% { transform: scale(1.25) rotate(-6deg); background: var(--moeda); color: #1a1446; }
+  60% { transform: scale(0.95) rotate(4deg); }
+}
+.topo nav a {
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--tinta-suave);
+}
+.topo nav a:hover { color: var(--tinta); text-decoration: underline; text-underline-offset: 4px; }
+/* Seção que está na tela agora */
+.topo nav a[aria-current] {
+  color: var(--tinta);
+  text-decoration: underline;
+  text-decoration-color: var(--moeda);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: clamp(40px, 8vw, 96px) var(--gutter) clamp(48px, 8vw, 88px);
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: clamp(32px, 6vw, 72px);
+  align-items: center;
+}
+
+/* Selo "agenda aberta" com luz verde piscando devagar */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  padding: 7px 15px 7px 12px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--contorno);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.status:empty { display: none; }
+.status::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--grama);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--grama) 30%, transparent);
+  animation: luz 1.8s steps(2) infinite;
+}
+@keyframes luz { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--grama) 15%, transparent); } }
+
+.hero h1 {
+  font-size: clamp(2.75rem, 7.5vw, 5.5rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+.hero-resumo {
+  margin-top: 24px;
+  max-width: 34ch;
+  font-size: clamp(1.125rem, 1.6vw, 1.3rem);
+  color: var(--tinta-suave);
+}
+
+.acoes { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 22px;
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 700 1rem/1 var(--fonte-texto);
+  text-decoration: none;
+  cursor: var(--cursor-clique);
+  box-shadow: var(--sombra);
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.botao:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--contorno); }
+.botao:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--contorno); }
+.botao.primario { background: var(--moeda); color: #1a1446; }
+
+/* Retrato + ficha */
+.hero-lado { display: grid; }
+
+.retrato {
+  justify-self: end;
+  width: min(290px, 78%);
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  padding: 10px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 18px;
+  box-shadow: var(--sombra-grande);
+  transform: rotate(-3deg);
+}
+.retrato img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.retrato-vazio {
+  height: 100%;
+  display: grid;
+  place-content: center;
+  gap: 6px;
+  padding: 16px;
+  text-align: center;
+  border: 2px dashed color-mix(in srgb, var(--tinta) 35%, transparent);
+  border-radius: 10px;
+  background: var(--ceu);
+}
+.retrato-vazio strong { font: 800 1.3rem/1.2 var(--fonte-titulo); }
+.retrato-vazio span { font-size: 0.85rem; color: var(--tinta-suave); }
+.retrato-vazio code { font-size: 0.85em; }
+
+/* Ficha de jogador */
+.ficha {
+  position: relative;
+  z-index: 1;
+  margin-top: -96px;
+  width: 92%;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 22px;
+  box-shadow: var(--sombra-grande);
+  padding: 26px;
+  transform: rotate(1.5deg);
+}
+
+.ficha-topo { display: flex; align-items: center; gap: 16px; }
+
+.selo { display: block; aspect-ratio: 406 / 462; }
+.marca .selo { height: 36px; }
+
+.avatar { flex: none; width: 68px; }
+.avatar .selo { width: 100%; }
+
+.ficha-nome { font: 800 1.35rem/1.2 var(--fonte-titulo); }
+.ficha-classe { color: var(--tinta-suave); font-size: 0.95rem; }
+
+.nivel { margin-top: 22px; }
+.nivel-linha { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.nivel-num { font: 800 2.25rem/1 var(--fonte-titulo); }
+.nivel-dica { font-size: 0.85rem; color: var(--tinta-suave); text-align: right; }
+
+.xp {
+  margin-top: 10px;
+  height: 18px;
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  background: var(--ceu);
+  overflow: hidden;
+}
+.xp-barra {
+  height: 100%;
+  width: 0;
+  background: var(--grama);
+  border-right: 2px solid var(--contorno);
+  transition: width 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) 0.3s;
+}
+
+.stats {
+  margin: 22px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  border-top: 2px dashed color-mix(in srgb, var(--tinta) 25%, transparent);
+  padding-top: 18px;
+}
+.stats dt { font-size: 0.8rem; color: var(--tinta-suave); }
+.stats dd { margin: 2px 0 0; font: 700 1.1rem/1.25 var(--fonte-titulo); overflow-wrap: anywhere; }
+
+/* "Role para começar": seta de pixel quicando no pé do hero */
+.comecar {
+  grid-column: 1 / -1;
+  justify-self: center;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: clamp(4px, 2vw, 16px);
+  color: var(--tinta-suave);
+  font: 800 0.75rem/1 var(--fonte-titulo);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.comecar:hover { color: var(--tinta); }
+.comecar svg { width: 21px; fill: var(--moeda); filter: drop-shadow(2px 2px 0 var(--contorno)); animation: quica 1s steps(2) infinite; }
+@keyframes quica { 50% { transform: translateY(5px); } }
+
+/* ---------- Seções ---------- */
+.secao {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 80px) var(--gutter);
+}
+
+.secao h2,
+.contato h2 {
+  font-size: clamp(2rem, 4.5vw, 3rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 72;
+}
+
+.secao-cabeca {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 32px;
+}
+.secao-cabeca > p { color: var(--tinta-suave); max-width: 46ch; }
+
+/* Rótulo de fase acima dos títulos ("Mundo 1-2"), com um bloquinho de moeda */
+.olho {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: var(--tinta-suave);
+  font: 800 0.78rem/1 var(--fonte-titulo);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.olho::before {
+  content: "";
+  flex: none;
+  width: 10px;
+  height: 10px;
+  background: var(--moeda);
+  border: 2px solid var(--contorno);
+}
+
+.tem-moeda { position: relative; }
+
+/* Sobre */
+.sobre {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 24px 48px;
+}
+.sobre-texto { display: grid; gap: 16px; max-width: 62ch; font-size: 1.125rem; }
+
+/* ---------- Serviços ---------- */
+.servicos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  gap: 20px;
+}
+
+.servico {
+  --cor: var(--moeda);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+.servico:nth-child(4n + 2) { --cor: var(--rara); }
+.servico:nth-child(4n + 3) { --cor: var(--grama); }
+.servico:nth-child(4n + 4) { --cor: var(--cereja); }
+.servico .medalha { margin-bottom: 4px; }
+.servico h3 { font-size: 1.3rem; font-weight: 800; line-height: 1.2; }
+.servico > p { color: var(--tinta-suave); font-size: 0.95rem; line-height: 1.45; }
+
+.servico-inclui {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 12px 0 0;
+  display: grid;
+  gap: 6px;
+  font-size: 0.92rem;
+  border-top: 2px dashed color-mix(in srgb, var(--tinta) 25%, transparent);
+}
+.servico-inclui li { display: flex; gap: 8px; }
+.servico-inclui li::before { content: "✓"; color: var(--grama); font-weight: 800; }
+
+.servico-rodape { margin-top: auto; padding-top: 10px; display: grid; gap: 12px; }
+.servico-preco { font: 800 1.1rem/1.2 var(--fonte-titulo); }
+.servico-rodape .botao { justify-content: center; }
+
+/* ---------- Como funciona ---------- */
+.etapas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.etapa {
+  --cor: var(--moeda);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+.etapa:nth-child(4n + 2) { --cor: var(--rara); }
+.etapa:nth-child(4n + 3) { --cor: var(--grama); }
+.etapa:nth-child(4n + 4) { --cor: var(--cereja); }
+.etapa-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.etapa .medalha { width: 52px; height: 52px; font-size: 1.5rem; }
+.etapa-num { color: var(--tinta-suave); font: 800 0.75rem/1 var(--fonte-titulo); letter-spacing: 0.16em; text-transform: uppercase; }
+.etapa h3 { font-size: 1.3rem; font-weight: 800; }
+.etapa p { color: var(--tinta-suave); font-size: 0.95rem; line-height: 1.45; }
+
+/* Setinha de pixel ligando uma etapa à seguinte */
+.etapa:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: -21px;
+  width: 16px;
+  height: 16px;
+  margin-top: -8px;
+  background: var(--contorno);
+  clip-path: polygon(0 35%, 50% 35%, 50% 0, 100% 50%, 50% 100%, 50% 65%, 0 65%);
+}
+
+/* ---------- Conquistas ---------- */
+.conquistas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+  gap: 18px;
+}
+
+.conquista {
+  --cor: var(--comum);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 18px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+}
+.conquista[data-raridade="rara"] { --cor: var(--rara); }
+.conquista[data-raridade="épica"] { --cor: var(--epica); }
+.conquista[data-raridade="lendária"] { --cor: var(--lendaria); }
+
+.medalha {
+  width: 60px;
+  height: 60px;
+  display: grid;
+  place-items: center;
+  font-size: 1.75rem;
+  background: color-mix(in srgb, var(--cor) 18%, var(--papel));
+  border: 3px solid var(--cor);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+
+.conquista h3 { font-size: 1.15rem; font-weight: 700; line-height: 1.2; }
+.conquista p { margin-top: 4px; font-size: 0.95rem; color: var(--tinta-suave); line-height: 1.45; }
+
+.conquista-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 10px;
+  font-size: 0.82rem;
+}
+.raridade { color: var(--cor); font-weight: 700; }
+.raridade::before { content: "◆ "; }
+.conquista-data { color: var(--tinta-suave); }
+
+/* Brilho da lendária: anima só transform, que roda na placa de vídeo sem repintar o card */
+.conquista[data-raridade="lendária"] { position: relative; overflow: hidden; }
+.conquista[data-raridade="lendária"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, color-mix(in srgb, var(--moeda) 35%, transparent) 50%, transparent 65%);
+  transform: translateX(-100%);
+  animation: brilho 5s ease-in-out infinite;
+}
+@keyframes brilho {
+  0%, 60% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.conquista.bloqueada {
+  border-style: dashed;
+  box-shadow: none;
+  background: transparent;
+}
+.conquista.bloqueada .medalha { filter: grayscale(1); opacity: 0.5; }
+.em-andamento { color: var(--tinta-suave); font-weight: 700; }
+.em-andamento::before { content: "◇ "; }
+
+/* ---------- Projetos ---------- */
+.projetos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.projeto {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+.projeto h3 { font-size: 1.5rem; font-weight: 800; }
+.projeto p { color: var(--tinta-suave); max-width: 60ch; }
+
+.projeto.destaque {
+  grid-column: 1 / -1;
+  background: var(--tinta);
+  color: var(--ceu);
+  box-shadow: 8px 8px 0 var(--moeda);
+  padding: clamp(24px, 4vw, 40px);
+}
+.projeto.destaque h3 { font-size: clamp(1.75rem, 3.5vw, 2.5rem); }
+.projeto.destaque p { color: color-mix(in srgb, var(--ceu) 80%, transparent); font-size: 1.1rem; }
+.projeto.destaque .tag { border-color: currentColor; }
+.selo-destaque {
+  align-self: flex-start;
+  background: var(--moeda);
+  color: #1a1446;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; margin: 0; }
+.tag {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 3px 12px;
+  border: 1.5px solid color-mix(in srgb, var(--tinta) 35%, transparent);
+  border-radius: 999px;
+}
+
+.projeto-tipo { margin-top: 4px; font-size: 0.95rem; font-weight: 600; opacity: 0.75; }
+.projeto.destaque .projeto-tipo { color: var(--moeda); opacity: 1; }
+
+.projeto-capa {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  object-position: top;
+  border: 2px solid var(--contorno);
+  border-radius: 10px;
+}
+
+.projeto-acoes { margin-top: auto; padding-top: 8px; }
+.projeto.destaque .botao { box-shadow: 4px 4px 0 var(--ceu); }
+
+/* ---------- Janela do projeto ---------- */
+.modal {
+  width: min(760px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 2px solid var(--contorno);
+  border-radius: 20px;
+  background: var(--papel);
+  color: var(--tinta);
+  box-shadow: var(--sombra-grande);
+  overflow: auto;
+}
+.modal::backdrop { background: color-mix(in srgb, #1a1446 55%, transparent); backdrop-filter: blur(3px); }
+.modal[open] { animation: modal-abre 0.25s cubic-bezier(0.2, 1.2, 0.4, 1); }
+@keyframes modal-abre { from { transform: translateY(16px) scale(0.97); opacity: 0; } }
+
+.modal-corpo { position: relative; padding: 66px clamp(20px, 4vw, 32px) clamp(20px, 4vw, 32px); }
+.modal h3 { font-size: clamp(1.75rem, 4vw, 2.25rem); font-weight: 800; }
+
+.modal-fechar {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 1;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--contorno);
+  border-radius: 50%;
+  background: var(--moeda);
+  color: #1a1446;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: var(--cursor-clique);
+  box-shadow: 2px 2px 0 var(--contorno);
+}
+
+.modal-galeria {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  margin: 0 0 24px;
+  padding: 0 0 8px;
+}
+.modal-galeria:empty { display: none; }
+.modal-galeria img {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: 90%;
+  height: clamp(200px, 40vh, 340px);
+  object-fit: cover;
+  border: 2px solid var(--contorno);
+  border-radius: 12px;
+  scroll-snap-align: start;
+}
+
+.modal-texto { display: grid; gap: 12px; margin: 16px 0 20px; max-width: 62ch; }
+.modal-links { margin-top: 24px; }
+.modal-links:empty { display: none; }
+
+/* ---------- Jornada ---------- */
+.fases {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+}
+
+.fase {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 24px;
+  position: relative;
+  padding-bottom: 36px;
+}
+.fase:last-child { padding-bottom: 0; }
+.fase:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 47px;
+  top: 64px;
+  bottom: 8px;
+  border-left: 3px dotted var(--tinta-suave);
+}
+
+.fase-num {
+  width: 96px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 12px;
+  box-shadow: var(--sombra);
+  font: 800 1rem/1 var(--fonte-titulo);
+}
+.fase.atual .fase-num { background: var(--grama); color: #fff; }
+
+.fase h3 { font-size: 1.35rem; font-weight: 700; }
+.fase-onde { color: var(--tinta-suave); font-weight: 600; margin-top: 2px; }
+.fase-desc { margin-top: 8px; max-width: 60ch; }
+
+/* ---------- Inventário ---------- */
+.inventario {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr));
+  gap: 28px 32px;
+}
+.inventario h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+.inventario .tag { background: var(--papel); border: 2px solid var(--contorno); }
+
+/* ---------- Fase bônus (jogo) ---------- */
+/* O jogo é sempre noturno, então o painel e o placar usam a paleta escura nos dois temas. */
+.jogo {
+  position: relative;
+  height: clamp(380px, 56vh, 500px);
+  overflow: hidden;
+  background: #120e2b;
+  border: 2px solid var(--contorno);
+  border-radius: 18px;
+  box-shadow: var(--sombra-grande);
+}
+.jogo-tela { display: block; width: 100%; height: 100%; }
+.jogo.jogando .jogo-tela { touch-action: none; cursor: crosshair; }
+
+.jogo-hud,
+.jogo-painel {
+  --papel: #1f1947;
+  --tinta: #efedff;
+  --tinta-suave: #b5b0de;
+  --contorno: #6a5cf0;
+  color: var(--tinta);
+}
+.jogo-hud {
+  position: absolute;
+  top: 12px;
+  left: 16px;
+  right: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  pointer-events: none;
+  font: 800 0.95rem/1 var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+}
+.jogo-hud strong { color: var(--moeda); }
+.jogo-vidas { display: flex; gap: 6px; }
+.jogo-vidas span { display: grid; width: 18px; }
+.jogo-vidas svg { width: 100%; height: auto; fill: var(--cereja); }
+.jogo-vidas .perdida svg { fill: #4b4775; }
+
+.jogo-painel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+  text-align: center;
+  background: color-mix(in srgb, #120e2b 72%, transparent);
+}
+.jogo-painel[hidden] { display: none; }
+.jogo-painel h3 {
+  color: var(--moeda);
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 800;
+  text-shadow: 3px 3px 0 #6a5cf0;
+}
+.jogo-painel p { max-width: 40ch; color: var(--tinta-suave); }
+.jogo-painel .acoes { justify-content: center; margin-top: 6px; }
+.jogo-recorde strong { color: var(--tinta); }
+.jogo-placar { color: var(--tinta) !important; font: 800 clamp(1.6rem, 4vw, 2.2rem)/1 var(--fonte-titulo); }
+
+/* ---------- Perguntas frequentes (caixas de diálogo de RPG) ---------- */
+.perguntas { display: grid; gap: 14px; max-width: 860px; }
+
+.pergunta {
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 14px;
+  box-shadow: var(--sombra);
+}
+.pergunta summary {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  font: 700 1.1rem/1.3 var(--fonte-titulo);
+  list-style: none;
+}
+.pergunta summary::-webkit-details-marker { display: none; }
+.pergunta summary::before {
+  content: "?";
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  background: var(--moeda);
+  color: #1a1446;
+  border: 2px solid var(--contorno);
+  font: 800 1rem/1 var(--fonte-titulo);
+}
+.pergunta summary::after {
+  content: "+";
+  flex: none;
+  margin-left: auto;
+  font: 800 1.5rem/1 var(--fonte-titulo);
+  transition: transform 0.2s;
+}
+.pergunta[open] summary::after { transform: rotate(45deg); }
+.pergunta-resposta { padding: 0 20px 18px 66px; color: var(--tinta-suave); max-width: 72ch; }
+/* Setinha piscando no fim da fala, como nos diálogos de RPG */
+.pergunta-resposta p::after {
+  content: "";
+  display: inline-block;
+  width: 9px;
+  height: 6px;
+  margin-left: 8px;
+  background: var(--moeda);
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  animation: quica 1s steps(2) infinite;
+}
+
+/* ---------- Contato ---------- */
+.contato {
+  max-width: var(--largura);
+  margin: clamp(32px, 6vw, 64px) auto 0;
+  padding: clamp(56px, 8vw, 96px) var(--gutter);
+  text-align: center;
+}
+.contato > p:not(.olho) { margin-top: 12px; color: var(--tinta-suave); font-size: 1.15rem; }
+.contato .olho { justify-content: center; }
+
+.contato-acoes { display: flex; justify-content: center; margin-top: 32px; }
+.contato-acoes:empty { display: none; }
+.botao.grande { padding: 18px 30px; font-size: 1.2rem; box-shadow: var(--sombra-grande); }
+.botao.grande:hover { box-shadow: 10px 10px 0 var(--contorno); }
+.botao svg { flex: none; width: 18px; height: auto; fill: currentColor; }
+.botao.grande svg { width: 22px; }
+
+.contato-email {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px 24px;
+  margin-top: 36px;
+}
+.email-grande {
+  font: 800 clamp(1.4rem, 4.5vw, 2.75rem)/1.1 var(--fonte-titulo);
+  text-decoration: underline;
+  text-decoration-color: var(--moeda);
+  text-decoration-thickness: 0.18em;
+  text-underline-offset: 0.12em;
+  overflow-wrap: anywhere;
+}
+.email-grande:hover { text-decoration-color: var(--cereja); }
+
+.redes {
+  list-style: none;
+  padding: 0;
+  margin: 32px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+  max-width: var(--largura);
+  margin: 0 auto;
+  padding: 32px var(--gutter) 48px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 24px;
+  font-size: 0.9rem;
+  color: var(--tinta-suave);
+}
+.rodape-dica { font-style: italic; }
+.rodape-dica strong { font-style: normal; color: var(--tinta); }
+
+.botao-link {
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  font-style: normal;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-color: var(--moeda);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+.botao-link:hover { text-decoration-color: var(--cereja); }
+
+/* ---------- Painel de conquistas do visitante ---------- */
+.trofeus-resumo { margin-top: 10px; color: var(--tinta-suave); }
+.trofeus-resumo strong { color: var(--tinta); }
+.trofeus-barra { margin-top: 14px; }
+.trofeus-barra .xp-barra { background: var(--moeda); transition-delay: 0s; }
+
+.trofeus {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 10px;
+}
+.trofeu {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: color-mix(in srgb, var(--moeda) 16%, var(--papel));
+  border: 2px solid var(--contorno);
+  border-radius: 12px;
+}
+.trofeu-icone {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  font-size: 1.3rem;
+  background: var(--moeda);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.trofeu strong { display: block; font: 700 0.95rem/1.2 var(--fonte-titulo); }
+.trofeu small { display: block; margin-top: 2px; color: var(--tinta-suave); font-size: 0.8rem; line-height: 1.3; }
+.trofeu.trancado { background: transparent; border-style: dashed; }
+.trofeu.trancado .trofeu-icone { background: color-mix(in srgb, var(--tinta) 12%, transparent); filter: grayscale(1); }
+.trofeu.trancado strong { color: var(--tinta-suave); }
+
+/* ---------- Moedas escondidas ---------- */
+.moeda-escondida {
+  position: absolute;
+  z-index: 2;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  filter: drop-shadow(2px 2px 0 color-mix(in srgb, var(--contorno) 60%, transparent));
+  animation: moeda-gira 1.2s steps(1) infinite;
+}
+.moeda-escondida svg { display: block; width: 100%; height: 100%; }
+.moeda-escondida:hover { animation-duration: 0.5s; }
+.moeda-escondida.pegou { animation: moeda-pega 0.4s ease-out forwards; }
+@keyframes moeda-gira {
+  0%, 100% { transform: scaleX(1); }
+  25% { transform: scaleX(0.6); }
+  50% { transform: scaleX(0.2); }
+  75% { transform: scaleX(0.6); }
+}
+@keyframes moeda-pega { to { transform: translateY(-30px) scale(1.4); opacity: 0; } }
+
+.ficha .moeda-escondida { top: 14px; right: 16px; }
+#sobre .moeda-escondida { right: var(--gutter); bottom: 18px; }
+#jornada .moeda-escondida { left: calc(var(--gutter) + 35px); bottom: 14px; }
+.rodape .moeda-escondida { left: 50%; bottom: 10px; margin-left: -13px; }
+.modal-corpo .moeda-escondida { right: clamp(20px, 4vw, 32px); bottom: clamp(20px, 4vw, 32px); }
+
+.m-o { fill: var(--contorno); }
+.m-y { fill: var(--moeda); }
+.m-w { fill: #ffffff; }
+.m-d { fill: #c98a00; }
+
+.texto-flutuante {
+  position: fixed;
+  z-index: 70;
+  translate: -50% -100%;
+  pointer-events: none;
+  color: var(--tinta);
+  font: 800 1rem/1 var(--fonte-titulo);
+  text-shadow: 2px 2px 0 var(--moeda);
+  white-space: nowrap;
+  animation: like-sobe 1s ease-out forwards;
+}
+
+/* Chuva de moedas (código secreto e "zerou o site") */
+.chuva {
+  position: fixed;
+  top: -40px;
+  z-index: 65;
+  width: 24px;
+  pointer-events: none;
+  animation: chuva var(--dur) linear var(--atraso) both;
+}
+.chuva svg { display: block; width: 100%; height: auto; }
+@keyframes chuva { to { transform: translateY(calc(100vh + 80px)) rotate(var(--giro)); } }
+
+/* ---------- Cards surgem ao entrar na tela ---------- */
+/* "backwards": depois que a animação termina, o card volta a obedecer ao hover normalmente */
+.revelar:not(.visivel) { opacity: 0; }
+.revelar.visivel { animation: surgir 0.6s cubic-bezier(0.2, 1.2, 0.4, 1) var(--atraso, 0ms) backwards; }
+@keyframes surgir { from { opacity: 0; transform: translateY(28px) scale(0.98); } }
+
+/* Cards levantam no hover, como os botões */
+@media (hover: hover) {
+  .servico,
+  .etapa,
+  .projeto,
+  .conquista:not(.bloqueada),
+  .pergunta { transition: transform 0.15s, box-shadow 0.15s; }
+  .servico:hover,
+  .etapa:hover,
+  .projeto:not(.destaque):hover,
+  .conquista:not(.bloqueada):hover {
+    transform: translate(-3px, -3px);
+    box-shadow: 7px 7px 0 var(--contorno);
+  }
+  .projeto.destaque:hover { transform: translate(-3px, -3px); box-shadow: 11px 11px 0 var(--moeda); }
+  .pergunta:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--contorno); }
+}
+
+/* ---------- Barra de progresso (listras em espiral no rodapé da tela) ---------- */
+:root {
+  --altura-progresso: 10px;
+  --listra-amarela: #ffc531;
+  --listra-roxa: #7b4dff;
+}
+
+.progresso {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  z-index: 60;
+  width: 0;
+  height: var(--altura-progresso);
+  pointer-events: none;
+  background: repeating-linear-gradient(-45deg, var(--listra-amarela) 0 8px, var(--listra-roxa) 8px 16px);
+}
+
+/* ---------- Faíscas do clique ---------- */
+.faisca {
+  position: fixed;
+  z-index: 70;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  pointer-events: none;
+  background: var(--cor, var(--moeda));
+  animation: faisca 0.45s steps(5) forwards;
+}
+@keyframes faisca {
+  to { transform: translate(var(--dx), var(--dy)) scale(0.4); opacity: 0; }
+}
+
+/* ---------- Botão de like compartilhado ---------- */
+.like {
+  position: fixed;
+  left: 16px;
+  bottom: calc(var(--altura-progresso) + 12px);
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px 8px 10px;
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 800 1rem/1 var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+  cursor: var(--cursor-clique);
+  box-shadow: var(--sombra);
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+.like:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--contorno); }
+.like:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--contorno); }
+.like-icone {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--moeda);
+  font-size: 1rem;
+}
+.like.batida .like-icone { animation: like-batida 0.25s ease-out; }
+@keyframes like-batida { 50% { transform: scale(1.3) rotate(-12deg); } }
+
+.like-mais {
+  position: absolute;
+  left: 18px;
+  top: -4px;
+  pointer-events: none;
+  color: var(--listra-roxa);
+  font: 800 1rem/1 var(--fonte-titulo);
+  animation: like-sobe 0.7s ease-out forwards;
+}
+@keyframes like-sobe {
+  from { transform: translate(0, 0); opacity: 1; }
+  to { transform: translate(var(--desvio, 0px), -48px); opacity: 0; }
+}
+
+/* ---------- Toast de conquista ---------- */
+.toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 20px;
+  z-index: 50;
+  pointer-events: none; /* os avisos nunca bloqueiam cliques no que está embaixo */
+  display: grid;
+  gap: 10px;
+  max-width: calc(100vw - 32px);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(360px, calc(100vw - 32px));
+  padding: 12px 16px 12px 12px;
+  background: var(--tinta);
+  color: var(--ceu);
+  border: 2px solid var(--contorno);
+  border-radius: 14px;
+  box-shadow: 4px 4px 0 var(--moeda);
+  animation: toast-entra 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.toast.saindo { animation: toast-sai 0.3s ease-in both; }
+.toast-icone {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  font-size: 1.4rem;
+  background: var(--moeda);
+  clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+}
+.toast small { display: block; font-size: 0.8rem; opacity: 0.75; }
+.toast strong { font-family: var(--fonte-titulo); font-size: 1.05rem; }
+
+@keyframes toast-entra {
+  from { transform: translateY(120%) scale(0.9); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+@keyframes toast-sai {
+  to { transform: translateX(110%); opacity: 0; }
+}
+
+/* ---------- Responsivo ---------- */
+@media (max-width: 1000px) {
+  .so-largo { display: none; }
+  .etapas { grid-template-columns: repeat(2, 1fr); }
+  .etapa:nth-child(2n)::after { display: none; }
+}
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; }
+  .hero-lado { max-width: 440px; }
+  .ficha { transform: none; }
+  .sobre { grid-template-columns: 1fr; }
+  .projetos { grid-template-columns: 1fr; }
+
+  /* Marca, troféu e som na primeira linha, menu inteiro embaixo */
+  .topo { flex-wrap: wrap; gap: 6px 10px; }
+  .hud { margin-left: auto; }
+  .topo nav { order: 3; width: 100%; margin-left: 0; justify-content: space-between; flex-wrap: wrap; row-gap: 4px; }
+}
+
+@media (max-width: 600px) {
+  .som { width: 34px; height: 34px; }
+  .hud { height: 34px; }
+  .etapas { grid-template-columns: 1fr; }
+  .etapa::after { display: none; }
+  .fase { grid-template-columns: 64px 1fr; gap: 16px; }
+  .fase-num { width: 64px; height: 48px; font-size: 0.85rem; }
+  .fase:not(:last-child)::after { left: 31px; top: 56px; }
+  #jornada .moeda-escondida { left: calc(var(--gutter) + 19px); }
+  .stats dd { font-size: 1rem; }
+  .pergunta summary { padding: 14px 16px; font-size: 1.02rem; }
+  .pergunta-resposta { padding: 0 16px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
+  }
+}
