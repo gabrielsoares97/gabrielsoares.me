@@ -471,6 +471,22 @@
     )
     .join("");
 
+  // As mesmas perguntas em formato que o Google entende
+  if (d.perguntas?.length) {
+    const faq = document.createElement("script");
+    faq.type = "application/ld+json";
+    faq.textContent = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: d.perguntas.map((p) => ({
+        "@type": "Question",
+        name: p.pergunta,
+        acceptedAnswer: { "@type": "Answer", text: p.resposta.replace(/\*/g, "") },
+      })),
+    });
+    document.head.appendChild(faq);
+  }
+
   /* ---------- Contato: "Monte sua missão" ---------- */
   // Uma pergunta por vez; cada clique escolhe e avança. No fim, o resumo vira uma mensagem
   // pronta no WhatsApp (ou no e-mail, se não houver WhatsApp nos links).
@@ -1244,18 +1260,18 @@
     ".....X.....",
   ];
   const LUA = [
-    "....XXXX...",
     "..XXXX.....",
-    ".XXXX......",
-    ".XXX.....X.",
-    "XXXX.....X.",
-    "XXXX...XXXXX",
-    "XXXX.....X.",
-    ".XXXX....X.",
-    ".XXXXX.....",
-    "..XXXXXXXX.",
-    "....XXXXX..",
-  ].map((l) => l.padEnd(12, ".").slice(0, 12));
+    ".XXX.......",
+    "XXX........",
+    "XX.........",
+    "XX.........",
+    "XX.........",
+    "XX........X",
+    "XXX......XX",
+    ".XXXX..XXX.",
+    "..XXXXXXX..",
+    "....XXX....",
+  ];
   const botaoTema = $("tema");
 
   function mostrarTema() {
@@ -1285,7 +1301,7 @@
   /* ---------- Cards surgem ao entrar na tela ---------- */
   // Só com JavaScript e movimento liberado: sem isso, tudo já aparece de cara.
   if ("IntersectionObserver" in window && !semMovimento.matches) {
-    const revelaveis = document.querySelectorAll(".servico, .etapa, .conquista, .projeto, .fase, .inventario > div, .pergunta, .jogo");
+    const revelaveis = document.querySelectorAll(".servico, .etapa, .conquista, .projeto, .fase, .inventario > div, .pergunta, .jogo, .missao");
     const revelador = new IntersectionObserver(
       (entradas) => {
         for (const e of entradas) {
@@ -1567,7 +1583,7 @@
       atualizarHudJogo();
       // A cada 3 sprints chega o chefão
       if (sprint % 3 === 0 && !chefe) {
-        chefe = { x: L / 2, y: -32, vida: 30 + sprint * 5, max: 30 + sprint * 5, ferido: 0, proximoFilhote: 2 };
+        chefe = { x: L / 2, y: -32, vida: 24 + sprint * 4, max: 24 + sprint * 4, ferido: 0, proximoFilhote: 2 };
         textos.push({ x: L / 2, y: A / 2 + 16, texto: "Chefão: deploy de sexta!", vida: 2, cor: "#ff8a3d", grande: true });
         som.tocar("alerta");
       }
@@ -1663,7 +1679,7 @@
       const c = chefe;
       c.ferido -= dt;
       c.y += (c.y < 30 ? 24 : 1.6 + sprint * 0.25) * dt;
-      c.x = L / 2 + Math.sin(tempo * 0.9) * (L / 2 - 18);
+      c.x = L / 2 + Math.sin(tempo * 0.6) * (L / 2 - 18);
       c.proximoFilhote -= dt;
       if (c.proximoFilhote <= 0 && c.y > 0) {
         c.proximoFilhote = Math.max(0.9, 2 - sprint * 0.08);
@@ -1854,4 +1870,216 @@
   mostrarPainel("inicio");
   desenharJogo();
   document.fonts?.ready.then(desenharJogo);
+
+  /* ---------- Terminal secreto (botão no rodapé ou Ctrl + K) ---------- */
+  const modalTerminal = $("modal-terminal");
+  const saida = $("terminal-saida");
+  const entrada = $("terminal-entrada");
+  const historico = [];
+  let posHistorico = 0;
+  const linkContratar = linkWhats?.url || `mailto:${d.email}`;
+  const enderecoCurto = (url) => url.replace(/^https?:\/\/(www\.)?/, "").replace(/\?.*$/, "").replace(/\/$/, "");
+  const ok = (t) => `<span class="t-ok">${t}</span>`;
+
+  const BANNER = [
+    " █████    █████ ",
+    "██       ██     ",
+    "██  ███   █████ ",
+    "██   ██       ██",
+    " █████    █████ ",
+  ].join("\n");
+
+  const PISTAS_MOEDA = {
+    ficha: "uma brilha na ficha de jogador, lá no topo.",
+    sobre: "outra descansa no fim do “Sobre mim”.",
+    jornada: "tem uma no caminho da jornada.",
+    rodape: "uma caiu lá no rodapé.",
+    projeto: "a última está guardada dentro do último projeto.",
+  };
+
+  // Comandos com "desc" aparecem na ajuda; os outros ficam para quem gosta de fuçar
+  const COMANDOS = {
+    ajuda: {
+      desc: "lista os comandos",
+      fn: () =>
+        Object.entries(COMANDOS)
+          .filter(([, c]) => c.desc)
+          .map(([nome, c]) => `${ok(nome.padEnd(11))}${c.desc}`)
+          .join("\n"),
+    },
+    sobre: { desc: "quem sou eu", fn: () => d.sobre.map((p) => esc(p.replace(/\*/g, ""))).join("\n\n") },
+    servicos: {
+      desc: "o que eu faço",
+      fn: () => d.servicos.map((s) => `${esc(s.icone)} <strong>${esc(s.nome)}</strong>: ${esc(s.descricao)}`).join("\n"),
+    },
+    projetos: {
+      desc: "o que já construí",
+      fn: () =>
+        d.projetos
+          .map(
+            (p) =>
+              `▸ <strong>${esc(p.nome)}</strong> (${esc(p.tipo)})` +
+              (p.link ? ` <a href="${esc(p.link)}" target="_blank" rel="noopener">${esc(enderecoCurto(p.link))}</a>` : "")
+          )
+          .join("\n"),
+    },
+    contato: {
+      desc: "onde me encontrar",
+      fn: () =>
+        [
+          `E-mail: <a href="mailto:${esc(d.email)}">${esc(d.email)}</a>`,
+          ...d.links.map((l) => `${esc(l.nome)}: <a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(enderecoCurto(l.url))}</a>`),
+        ].join("\n"),
+    },
+    contratar: {
+      desc: "abre o WhatsApp com uma mensagem pronta",
+      fn: () => {
+        window.open(linkContratar, "_blank", "noopener");
+        desbloquear("missao");
+        return "Abrindo o WhatsApp... 🚀";
+      },
+    },
+    conquistas: {
+      desc: "abre o painel de conquistas",
+      fn: () => {
+        modalTerminal.close();
+        abrirTrofeus();
+      },
+    },
+    moedas: {
+      desc: "dá uma pista de moeda escondida",
+      fn: () => {
+        const falta = Object.keys(PISTAS_MOEDA).find((id) => !moedasPegas.has(id));
+        return `Moedas: ${moedasPegas.size}/${TOTAL_MOEDAS}. ` + (falta ? `Pista: ${PISTAS_MOEDA[falta]}` : "Você já achou todas! 🪙");
+      },
+    },
+    jogar: {
+      desc: "vai para a fase bônus",
+      fn: () => {
+        modalTerminal.close();
+        $("jogo").scrollIntoView({ behavior: semMovimento.matches ? "auto" : "smooth" });
+        painel.querySelector("button")?.focus({ preventScroll: true });
+      },
+    },
+    tema: {
+      desc: "troca o dia pela noite",
+      fn: () => {
+        alternarTema();
+        return temaEscuro() ? "Boa noite. 🌙" : "Bom dia! ☀️";
+      },
+    },
+    som: {
+      desc: "liga ou desliga os sons",
+      fn: () => {
+        som.alternar();
+        return botaoSom.getAttribute("aria-pressed") === "true" ? "Som ligado. 🔊" : "Som desligado. 🔇";
+      },
+    },
+    limpar: {
+      desc: "limpa a tela",
+      fn: () => {
+        saida.innerHTML = "";
+      },
+    },
+    sair: { desc: "fecha o terminal", fn: () => modalTerminal.close() },
+    oi: { fn: () => `Oi! 👋 Digite ${ok("ajuda")} para ver o que dá para fazer aqui.` },
+    whoami: { fn: () => `visitante. Mas pode virar cliente: digite ${ok("contratar")}.` },
+    sudo: { fn: () => "Permissão negada. Root aqui só o Gabriel. 😎" },
+    rm: { fn: () => "Opa, calma! Este site foi feito à mão, peça por peça. 😅" },
+    ls: { fn: () => Object.keys(COMANDOS).filter((n) => COMANDOS[n].desc).join("  ") },
+    cafe: { fn: () => "☕ Recarregando... energia em 100%." },
+    data: { fn: () => new Date().toLocaleString("pt-BR") },
+    konami: { fn: () => "↑ ↑ ↓ ↓ ← → ← → B A. Mas fora do terminal. 😉" },
+  };
+  const APELIDOS = {
+    help: "ajuda", "?": "ajuda", comandos: "ajuda", clear: "limpar", cls: "limpar", exit: "sair", quit: "sair",
+    about: "sobre", whatsapp: "contratar", orcamento: "contratar", hire: "contratar", trofeus: "conquistas",
+    jogo: "jogar", play: "jogar", theme: "tema", ola: "oi", hello: "oi", hi: "oi", coffee: "cafe", date: "data", dir: "ls",
+  };
+
+  function escrever(html, classe = "") {
+    const linha = document.createElement("div");
+    if (classe) linha.className = classe;
+    linha.innerHTML = html;
+    saida.appendChild(linha);
+    saida.scrollTop = saida.scrollHeight;
+  }
+
+  function executar(texto) {
+    const limpo = texto.trim();
+    escrever(`<span class="t-prompt">~$</span> ${esc(limpo)}`, "t-cmd");
+    if (!limpo) return;
+    historico.push(limpo);
+    posHistorico = historico.length;
+    // Sem acento e sem maiúscula: "Serviços" e "servicos" dão no mesmo
+    const nome = limpo.split(/\s+/)[0].toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    const comando = COMANDOS[nome] || COMANDOS[APELIDOS[nome]];
+    if (!comando) {
+      escrever(`Comando não encontrado: ${esc(nome)}. Digite ${ok("ajuda")}.`, "t-erro");
+      return;
+    }
+    const resposta = comando.fn();
+    if (resposta) escrever(resposta);
+  }
+
+  function abrirTerminal() {
+    pausar();
+    if (!saida.childElementCount) {
+      escrever(`<pre class="t-banner" aria-hidden="true">${BANNER}</pre>`);
+      escrever(`Terminal do ${esc(nomeCompleto)}, versão 1.0. Digite ${ok("ajuda")} para ver os comandos.`);
+    }
+    if (!modalTerminal.open) modalTerminal.showModal();
+    entrada.focus();
+    som.tocar("abrir");
+    desbloquear("terminal");
+  }
+
+  $("abrir-terminal").addEventListener("click", abrirTerminal);
+  document.addEventListener("keydown", (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+      e.preventDefault();
+      abrirTerminal();
+    }
+  });
+
+  $("terminal-form").addEventListener("submit", (e) => {
+    e.preventDefault();
+    executar(entrada.value);
+    entrada.value = "";
+  });
+
+  // ↑ e ↓ navegam no histórico; Tab completa o comando
+  entrada.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+      e.preventDefault();
+      posHistorico = Math.min(historico.length, Math.max(0, posHistorico + (e.key === "ArrowUp" ? -1 : 1)));
+      entrada.value = historico[posHistorico] || "";
+    } else if (e.key === "Tab" && entrada.value.trim()) {
+      e.preventDefault();
+      const inicio = entrada.value.trim().toLowerCase();
+      const opcoes = Object.keys(COMANDOS).filter((n) => COMANDOS[n].desc && n.startsWith(inicio));
+      if (opcoes.length === 1) entrada.value = opcoes[0];
+      else if (opcoes.length > 1) escrever(opcoes.join("  "), "t-dica");
+    }
+  });
+
+  // Clicar na tela do terminal volta o cursor para a linha de comando (sem atrapalhar quem seleciona texto)
+  saida.addEventListener("click", (e) => {
+    if (!e.target.closest("a") && !getSelection().toString()) entrada.focus();
+  });
+
+  /* ---------- Recado para quem abre o console ---------- */
+  console.log("%cGS", "font: 800 44px 'Bricolage Grotesque', sans-serif; color: #ffc531; text-shadow: 3px 3px 0 #1a1446");
+  console.log("Olá, dev curioso! 👋 Este site foi feito à mão, sem template.\nAperte Ctrl + K para abrir o terminal, ou digite gabriel.contratar() aqui mesmo.");
+  window.gabriel = {
+    contratar() {
+      window.open(linkContratar, "_blank", "noopener");
+      desbloquear("missao");
+      return "Abrindo o WhatsApp... 🚀";
+    },
+    terminal() {
+      abrirTerminal();
+      return "Terminal aberto.";
+    },
+  };
 })();
