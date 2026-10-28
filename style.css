@@ -1324,10 +1324,12 @@ a { color: inherit; }
   .servico,
   .projeto,
   .conquista:not(.bloqueada),
+  .post-card,
   .pergunta { transition: transform 0.15s, box-shadow 0.15s; }
   .servico:hover,
   .projeto:not(.destaque):hover,
-  .conquista:not(.bloqueada):hover {
+  .conquista:not(.bloqueada):hover,
+  .post-card:hover {
     transform: translate(-3px, -3px);
     box-shadow: 7px 7px 0 var(--contorno);
   }
@@ -1476,6 +1478,192 @@ a { color: inherit; }
   to { transform: translateX(110%); opacity: 0; }
 }
 
+/* ---------- Blog (Diário de bordo) ---------- */
+/* Cards de post: na página inicial, na lista do blog e no "Continue lendo" */
+.posts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  /* auto-fit: com 2 ou 3 posts, os cards dividem a linha inteira, sem buraco no fim */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 20px;
+}
+
+.post-card {
+  --cor: var(--moeda);
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 22px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+}
+.post-card:nth-child(4n + 2) { --cor: var(--rara); }
+.post-card:nth-child(4n + 3) { --cor: var(--grama); }
+.post-card:nth-child(4n + 4) { --cor: var(--cereja); }
+.post-card .medalha { width: 52px; height: 52px; font-size: 1.5rem; }
+.post-card-texto { display: grid; gap: 8px; justify-items: start; }
+.post-card-meta { color: var(--tinta-suave); font: 800 0.72rem/1.3 var(--fonte-titulo); letter-spacing: 0.12em; text-transform: uppercase; }
+.post-card h2,
+.post-card h3 { font-size: 1.3rem; font-weight: 800; line-height: 1.2; }
+.post-card h2 a,
+.post-card h3 a { text-decoration: none; }
+.post-card p:not(.post-card-meta) { color: var(--tinta-suave); font-size: 0.95rem; line-height: 1.45; }
+/* O card inteiro é clicável; o contorno de foco vai no card */
+.post-card a::after { content: ""; position: absolute; inset: 0; border-radius: 14px; }
+.post-card a:focus-visible { outline: none; }
+.post-card:has(a:focus-visible) { outline: 3px solid var(--cereja); outline-offset: 3px; }
+
+.selo-rascunho {
+  padding: 3px 10px;
+  border-radius: 6px;
+  background: var(--cereja);
+  color: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+.aviso-rascunho {
+  margin-bottom: 28px;
+  padding: 12px 16px;
+  border: 2px dashed var(--cereja);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--cereja) 12%, var(--papel));
+  font-size: 0.95rem;
+}
+
+.migalhas { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 22px; font-size: 0.9rem; color: var(--tinta-suave); }
+.migalhas a {
+  color: var(--tinta);
+  font-weight: 600;
+  text-decoration-color: var(--moeda);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+
+/* Lista do blog */
+.blog-topo { padding-bottom: 0; }
+.blog-topo h1 {
+  font-size: clamp(2.6rem, 7vw, 4.5rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.035em;
+}
+.blog-intro { margin-top: 18px; max-width: 46ch; font-size: clamp(1.1rem, 1.6vw, 1.25rem); color: var(--tinta-suave); }
+.blog-lista { padding-top: 40px; }
+.posts-vazio { padding: 24px; border: 2px dashed var(--contorno); border-radius: 16px; color: var(--tinta-suave); }
+
+/* Post */
+.post { max-width: 800px; margin: 0 auto; padding: clamp(32px, 6vw, 64px) var(--gutter) 0; }
+.post-cabeca h1 {
+  font-size: clamp(2.1rem, 5.2vw, 3.4rem);
+  font-weight: 800;
+  font-variation-settings: "opsz" 96;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.post-resumo { margin-top: 18px; font-size: clamp(1.1rem, 1.6vw, 1.25rem); color: var(--tinta-suave); text-wrap: pretty; }
+
+.post-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 24px; font-size: 0.92rem; color: var(--tinta-suave); }
+.post-meta strong { color: var(--tinta); }
+.post-meta time,
+.post-meta time ~ span { display: inline-flex; align-items: center; gap: 8px; }
+/* Bloquinho de moeda entre as informações, como no rótulo das seções */
+.post-meta time::before,
+.post-meta time ~ span::before { content: ""; width: 7px; height: 7px; background: var(--moeda); border: 2px solid var(--contorno); }
+.post-autor { width: 40px; height: 40px; border: 2px solid var(--contorno); border-radius: 50%; object-fit: cover; }
+
+/* O texto vai num "papel": as nuvens passam por trás sem atrapalhar a leitura */
+.post-corpo {
+  margin-top: 32px;
+  padding: clamp(22px, 5vw, 52px);
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 18px;
+  box-shadow: var(--sombra-grande);
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+.post-corpo > * + * { margin-top: 1.1em; }
+.post-corpo h2 { margin-top: 1.9em; font-size: clamp(1.5rem, 3vw, 1.9rem); font-weight: 800; line-height: 1.15; }
+.post-corpo h3 { margin-top: 1.6em; font-size: 1.25rem; font-weight: 800; line-height: 1.25; }
+.post-corpo h4 { margin-top: 1.4em; font: 800 1.05rem/1.3 var(--fonte-titulo); }
+.post-corpo :is(h2, h3, h4) + * { margin-top: 0.6em; }
+.post-corpo a { font-weight: 600; text-decoration-color: var(--moeda); text-decoration-thickness: 3px; text-underline-offset: 4px; }
+.post-corpo a:hover { text-decoration-color: var(--cereja); }
+.post-corpo ul,
+.post-corpo ol { display: grid; gap: 0.5em; margin-bottom: 0; padding: 0; list-style: none; }
+.post-corpo ul > li { position: relative; padding-left: 26px; }
+.post-corpo ul > li::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  background: var(--moeda);
+  border: 2px solid var(--contorno);
+}
+.post-corpo ol { counter-reset: item; }
+.post-corpo ol > li { position: relative; padding-left: 42px; counter-increment: item; }
+.post-corpo ol > li::before {
+  content: counter(item);
+  position: absolute;
+  left: 0;
+  top: 0.12em;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--moeda);
+  color: #1a1446;
+  border: 2px solid var(--contorno);
+  border-radius: 8px;
+  font: 800 0.85rem/1 var(--fonte-titulo);
+}
+.post-corpo blockquote {
+  margin-inline: 0;
+  padding: 16px 20px;
+  background: color-mix(in srgb, var(--moeda) 16%, var(--papel));
+  border: 2px solid var(--contorno);
+  border-radius: 12px;
+  box-shadow: 3px 3px 0 var(--contorno);
+}
+.post-corpo blockquote > * + * { margin-top: 0.7em; }
+.post-corpo code { padding: 1px 6px; border-radius: 6px; background: color-mix(in srgb, var(--tinta) 9%, transparent); font: 0.9em var(--fonte-mono); }
+.post-corpo img { display: block; max-width: 100%; height: auto; border: 2px solid var(--contorno); border-radius: 10px; }
+.post-corpo hr { margin-block: 2em; border: 0; border-top: 2px dashed color-mix(in srgb, var(--tinta) 25%, transparent); }
+
+/* "Neste post": atalhos para os títulos */
+.post-indice { padding: 16px 20px; border: 2px dashed color-mix(in srgb, var(--tinta) 30%, transparent); border-radius: 12px; font-size: 1rem; line-height: 1.5; }
+.post-indice p { margin-bottom: 12px; color: var(--tinta-suave); font: 800 0.75rem/1 var(--fonte-titulo); letter-spacing: 0.18em; text-transform: uppercase; }
+.post-indice ol { gap: 8px; }
+.post-indice ol > li { padding-left: 34px; }
+.post-indice ol > li::before { top: 0; width: 24px; height: 24px; border-radius: 6px; font-size: 0.75rem; }
+.post-indice a { font-weight: 600; text-decoration-thickness: 2px; }
+
+/* Convite do fim do post, no estilo do projeto em destaque */
+.post-fim {
+  margin-top: 40px;
+  padding: clamp(24px, 5vw, 44px);
+  background: var(--tinta);
+  color: var(--ceu);
+  border: 2px solid var(--contorno);
+  border-radius: 18px;
+  box-shadow: 8px 8px 0 var(--moeda);
+}
+.post-fim .olho { color: color-mix(in srgb, var(--ceu) 75%, transparent); }
+.post-fim h2 { font-size: clamp(1.7rem, 3.5vw, 2.3rem); font-weight: 800; }
+.post-fim p:not(.olho) { margin-top: 12px; max-width: 52ch; color: color-mix(in srgb, var(--ceu) 82%, transparent); }
+.post-fim .acoes { margin-top: 24px; }
+.post-fim .botao { box-shadow: 4px 4px 0 var(--ceu); }
+
+.post-compartilhar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 22px; font-size: 0.95rem; color: var(--tinta-suave); }
+.post-compartilhar .botao-link { margin-left: 0; }
+
 /* ---------- Responsivo ---------- */
 @media (max-width: 1000px) {
   .so-largo { display: none; }
@@ -1492,6 +1680,7 @@ a { color: inherit; }
 
   /* Marca, troféu e som na primeira linha, menu inteiro embaixo */
   .topo { flex-wrap: wrap; gap: 6px 10px; }
+  .marca { margin-right: auto; } /* no blog não tem troféu: o dia/noite vai para a direita */
   .hud { margin-left: auto; }
   .topo nav { order: 3; width: 100%; margin-left: 0; justify-content: space-between; flex-wrap: wrap; row-gap: 4px; }
 }
@@ -1499,6 +1688,9 @@ a { color: inherit; }
 /* Telas bem estreitas: o sobrenome sai do topo para caber troféu, dia/noite e som */
 @media (max-width: 430px) {
   .marca-sobrenome { display: none; }
+  /* Os seis links do menu numa linha só, até em telas de 360px */
+  .topo nav { column-gap: 6px; }
+  .topo nav a { font-size: 0.85rem; }
 }
 
 @media (max-width: 600px) {
@@ -1518,6 +1710,9 @@ a { color: inherit; }
   .stats dd { font-size: 1rem; }
   .pergunta summary { padding: 14px 16px; font-size: 1.02rem; }
   .pergunta-resposta { padding: 0 16px 16px; }
+  /* Post no celular: mais largura para o texto */
+  .post-corpo { padding: 22px 18px; box-shadow: var(--sombra); font-size: 1.0625rem; }
+  .post-indice { padding: 14px 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

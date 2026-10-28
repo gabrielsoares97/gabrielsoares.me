@@ -652,7 +652,7 @@
   addEventListener("load", atualizarProgresso);
 
   /* ---------- Menu: marca a seção que está no meio da tela ---------- */
-  const linksMenu = [...document.querySelectorAll(".topo nav a")];
+  const linksMenu = [...document.querySelectorAll('.topo nav a[href^="#"]')]; // "Blog" é outra página
   const secoesMenu = linksMenu.map((a) => document.querySelector(a.getAttribute("href")));
   const espiao = new IntersectionObserver(
     (entradas) => {
@@ -676,6 +676,7 @@
   const SECRETAS = [
     { id: "visita", icone: "👋", titulo: "Visitante curioso", dica: "Comece a explorar o site." },
     { id: "fim", icone: "🏁", titulo: "Leu até o fim", dica: "Chegue ao fim da página." },
+    { id: "leitor", icone: "📖", titulo: "Leitor de bordo", dica: "Leia um post do blog até o fim." }, // desbloqueada pelo blog.js
     { id: "ida-e-volta", icone: "🚀", titulo: "Ida e volta", dica: "Vá até o fim da página e volte ao topo." },
     { id: "projetos", icone: "🔍", titulo: "Inspetor de projetos", dica: "Abra todos os projetos." },
     { id: "moedas", icone: "🪙", titulo: "Caçador de moedas", dica: "Ache as 5 moedas escondidas pelo site." },
@@ -1101,7 +1102,7 @@
   /* ---------- Cards surgem ao entrar na tela ---------- */
   // Só com JavaScript e movimento liberado: sem isso, tudo já aparece de cara.
   if ("IntersectionObserver" in window && !semMovimento.matches) {
-    const revelaveis = document.querySelectorAll(".servico, .etapa, .conquista, .projeto, .fase, .inventario > div, .pergunta, .jogo, .missao");
+    const revelaveis = document.querySelectorAll(".servico, .etapa, .conquista, .projeto, .fase, .inventario > div, .pergunta, .jogo, .missao, .post-card");
     const revelador = new IntersectionObserver(
       (entradas) => {
         for (const e of entradas) {
@@ -1761,6 +1762,13 @@
         painel.querySelector("button")?.focus({ preventScroll: true });
       },
     },
+    blog: {
+      desc: "abre o diário de bordo (blog)",
+      fn: () => {
+        location.href = "blog/";
+        return "Abrindo o diário de bordo... 📖";
+      },
+    },
     tema: {
       desc: "troca o dia pela noite",
       fn: () => {
@@ -1794,7 +1802,7 @@
   const APELIDOS = {
     help: "ajuda", "?": "ajuda", comandos: "ajuda", clear: "limpar", cls: "limpar", exit: "sair", quit: "sair",
     about: "sobre", whatsapp: "contratar", orcamento: "contratar", hire: "contratar", trofeus: "conquistas",
-    jogo: "jogar", play: "jogar", theme: "tema", ola: "oi", hello: "oi", hi: "oi", coffee: "cafe", date: "data", dir: "ls",
+    jogo: "jogar", play: "jogar", theme: "tema", diario: "blog", posts: "blog", ola: "oi", hello: "oi", hi: "oi", coffee: "cafe", date: "data", dir: "ls",
   };
 
   function escrever(html, classe = "") {

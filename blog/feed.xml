@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Diário de bordo | Gabriel Soares</title>
+    <link>https://gabrielsoares.me/blog/</link>
+    <atom:link href="https://gabrielsoares.me/blog/feed.xml" rel="self" type="application/rss+xml"/>
+    <description>Dicas práticas para colocar a sua empresa na internet: sites, Google e Instagram, explicados sem complicação.</description>
+    <language>pt-BR</language>
+    <item>
+      <title>Como colocar a sua empresa no Google Maps (passo a passo)</title>
+      <link>https://gabrielsoares.me/blog/como-colocar-empresa-no-google-maps/</link>
+      <guid>https://gabrielsoares.me/blog/como-colocar-empresa-no-google-maps/</guid>
+      <pubDate>Wed, 28 Oct 2026 12:00:00 GMT</pubDate>
+      <description>É de graça e coloca a sua empresa no mapa quando alguém procura o que você faz por perto. Veja como criar, verificar e deixar o perfil completo.</description>
+    </item>
+    <item>
+      <title>Landing page ou site institucional: qual escolher?</title>
+      <link>https://gabrielsoares.me/blog/landing-page-ou-site-institucional/</link>
+      <guid>https://gabrielsoares.me/blog/landing-page-ou-site-institucional/</guid>
+      <pubDate>Wed, 28 Oct 2026 12:00:00 GMT</pubDate>
+      <description>Um apresenta a empresa inteira, o outro vende uma coisa só. Veja as diferenças, quando usar cada um e o erro mais comum de quem anuncia na internet.</description>
+    </item>
+    <item>
+      <title>Minha empresa precisa de site ou só o Instagram basta?</title>
+      <link>https://gabrielsoares.me/blog/site-ou-instagram/</link>
+      <guid>https://gabrielsoares.me/blog/site-ou-instagram/</guid>
+      <pubDate>Wed, 28 Oct 2026 12:00:00 GMT</pubDate>
+      <description>O Instagram mostra a sua empresa para quem já te segue. O site faz ela ser encontrada por quem está procurando. Entenda quando cada um faz diferença.</description>
+    </item>
+  </channel>
+</rss>
