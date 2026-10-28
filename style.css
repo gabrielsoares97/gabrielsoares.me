@@ -44,6 +44,11 @@
   --fonte-texto: "Figtree", system-ui, sans-serif;
   --fonte-mono: ui-monospace, "Cascadia Mono", "SF Mono", Consolas, "Liberation Mono", monospace;
 
+  /* Faixa que separa os mundos: uma nuvem grande, da cor das nuvens do céu */
+  --faixa: #ffffff;
+  /* Borda de cima da faixa: os mesmos "calombos" de pixel das nuvens (32 x 6 pixels) */
+  --nuvem-borda: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 6' shape-rendering='crispEdges'%3E%3Cpath d='M9 0h4v1H9zM6 1h9v1H6zM24 1h3v1h-3zM4 2h13v1H4zM22 2h7v1h-7zM2 3h17v1H2zM20 3h11v1H20zM0 4h32v2H0z'/%3E%3C/svg%3E");
+
   --largura: 1120px;
   --gutter: clamp(16px, 4vw, 40px);
 
@@ -79,6 +84,7 @@
     --rara: #6f9bff;
     --epica: #b48aff;
     --lendaria: #ffc531;
+    --faixa: #2a2263;
   }
 }
 :root[data-tema="escuro"] {
@@ -91,6 +97,7 @@
   --rara: #6f9bff;
   --epica: #b48aff;
   --lendaria: #ffc531;
+  --faixa: #2a2263;
   color-scheme: dark;
 }
 :root[data-tema="claro"] { color-scheme: light; }
@@ -323,6 +330,11 @@ a { color: inherit; }
 .botao:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--contorno); }
 .botao:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--contorno); }
 .botao.primario { background: var(--moeda); color: #1a1446; }
+/* Discreto: ações secundárias e botões dentro de cards. A sombra só aparece no hover,
+   para a página não ter dezenas de botões "gritando" ao mesmo tempo. */
+.botao.leve { border-color: color-mix(in srgb, var(--contorno) 35%, transparent); box-shadow: none; }
+.botao.leve:hover { border-color: var(--contorno); box-shadow: 3px 3px 0 var(--contorno); transform: translate(-1px, -1px); }
+.botao.leve:active { box-shadow: none; transform: translate(1px, 1px); }
 
 /* Retrato + ficha */
 .hero-lado { display: grid; }
@@ -440,8 +452,38 @@ a { color: inherit; }
 .secao {
   max-width: var(--largura);
   margin: 0 auto;
-  padding: clamp(48px, 7vw, 80px) var(--gutter);
+  padding: clamp(40px, 6vw, 72px) var(--gutter);
 }
+
+/* Faixa de nuvem: junta as seções de um mesmo mundo e separa um mundo do outro.
+   Esconde o céu animado atrás dela, então o texto fica num fundo calmo. */
+.faixa {
+  position: relative;
+  margin-block: 24px; /* espaço para as bordas de nuvem, que ficam para fora */
+  background: var(--faixa);
+}
+.faixa::before,
+.faixa::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 24px;
+  background: var(--faixa);
+  -webkit-mask: var(--nuvem-borda) 0 100% / 128px 24px repeat-x;
+  mask: var(--nuvem-borda) 0 100% / 128px 24px repeat-x;
+  pointer-events: none;
+}
+.faixa::before { bottom: calc(100% - 1px); }
+/* Embaixo, a mesma borda de cabeça para baixo e deslocada, para não parecer carimbo */
+.faixa::after {
+  top: calc(100% - 1px);
+  transform: scaleY(-1);
+  -webkit-mask-position: 64px 100%;
+  mask-position: 64px 100%;
+}
+/* Dentro do mesmo mundo, as seções ficam mais perto umas das outras */
+.faixa > .secao + .secao { padding-top: clamp(8px, 2vw, 24px); }
 
 .secao h2,
 .contato h2 {
@@ -482,12 +524,33 @@ a { color: inherit; }
 
 .tem-moeda { position: relative; }
 
-/* Sobre */
-.sobre {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: 24px 48px;
+/* ---------- Sobre mim (abas) ---------- */
+/* Menu de abas no estilo do botão de troféu: a aba aberta fica amarela */
+.abas {
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  padding: 4px;
+  background: var(--papel);
+  border: 2px solid var(--contorno);
+  border-radius: 999px;
+  box-shadow: 2px 2px 0 var(--contorno);
 }
+.aba {
+  flex: 1 1 auto;
+  padding: 9px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--tinta-suave);
+  font: 700 0.95rem/1 var(--fonte-texto);
+  white-space: nowrap;
+}
+.aba:hover { color: var(--tinta); }
+.aba[aria-selected="true"] { background: var(--moeda); color: #1a1446; }
+
+.painel:focus-visible { outline-offset: 8px; }
+.painel-intro { margin-bottom: 24px; color: var(--tinta-suave); }
 .sobre-texto { display: grid; gap: 16px; max-width: 62ch; font-size: 1.125rem; }
 
 /* ---------- Serviços ---------- */
@@ -496,7 +559,7 @@ a { color: inherit; }
   margin: 0;
   padding: 0;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+  grid-template-columns: repeat(4, 1fr); /* 4 lado a lado, 2 + 2 no tablet, 1 por linha no celular: nunca sobra um sozinho */
   gap: 20px;
 }
 
@@ -544,38 +607,28 @@ a { color: inherit; }
   gap: 24px;
 }
 
+/* Sem caixa: as etapas formam uma trilha, ligadas por uma linha tracejada */
 .etapa {
   --cor: var(--moeda);
-  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 22px;
-  background: var(--papel);
-  border: 2px solid var(--contorno);
-  border-radius: 16px;
-  box-shadow: var(--sombra);
+  gap: 8px;
 }
 .etapa:nth-child(4n + 2) { --cor: var(--rara); }
 .etapa:nth-child(4n + 3) { --cor: var(--grama); }
 .etapa:nth-child(4n + 4) { --cor: var(--cereja); }
-.etapa-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.etapa-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
 .etapa .medalha { width: 52px; height: 52px; font-size: 1.5rem; }
 .etapa-num { color: var(--tinta-suave); font: 800 0.75rem/1 var(--fonte-titulo); letter-spacing: 0.16em; text-transform: uppercase; }
 .etapa h3 { font-size: 1.3rem; font-weight: 800; }
-.etapa p { color: var(--tinta-suave); font-size: 0.95rem; line-height: 1.45; }
+.etapa p { max-width: 30ch; color: var(--tinta-suave); font-size: 0.95rem; line-height: 1.5; }
 
-/* Setinha de pixel ligando uma etapa à seguinte */
-.etapa:not(:last-child)::after {
+/* A linha sai do rótulo "Etapa N" e atravessa o vão até a próxima etapa */
+.etapa:not(:last-child) .etapa-topo::after {
   content: "";
-  position: absolute;
-  top: 50%;
-  right: -21px;
-  width: 16px;
-  height: 16px;
-  margin-top: -8px;
-  background: var(--contorno);
-  clip-path: polygon(0 35%, 50% 35%, 50% 0, 100% 50%, 50% 100%, 50% 65%, 0 65%);
+  flex: 1;
+  margin-right: -24px;
+  border-top: 3px dashed color-mix(in srgb, var(--contorno) 45%, transparent);
 }
 
 /* ---------- Conquistas ---------- */
@@ -1227,7 +1280,7 @@ a { color: inherit; }
 
 .ficha .moeda-escondida { top: 14px; right: 16px; }
 #sobre .moeda-escondida { right: var(--gutter); bottom: 18px; }
-#jornada .moeda-escondida { left: calc(var(--gutter) + 35px); bottom: 14px; }
+#jornada .moeda-escondida { left: 35px; bottom: 0; }
 .rodape .moeda-escondida { left: 50%; bottom: 10px; margin-left: -13px; }
 .modal-corpo .moeda-escondida { right: clamp(20px, 4vw, 32px); bottom: clamp(20px, 4vw, 32px); }
 
@@ -1269,12 +1322,10 @@ a { color: inherit; }
 /* Cards levantam no hover, como os botões */
 @media (hover: hover) {
   .servico,
-  .etapa,
   .projeto,
   .conquista:not(.bloqueada),
   .pergunta { transition: transform 0.15s, box-shadow 0.15s; }
   .servico:hover,
-  .etapa:hover,
   .projeto:not(.destaque):hover,
   .conquista:not(.bloqueada):hover {
     transform: translate(-3px, -3px);
@@ -1428,15 +1479,15 @@ a { color: inherit; }
 /* ---------- Responsivo ---------- */
 @media (max-width: 1000px) {
   .so-largo { display: none; }
-  .etapas { grid-template-columns: repeat(2, 1fr); }
-  .etapa:nth-child(2n)::after { display: none; }
+  .servicos { grid-template-columns: repeat(2, 1fr); }
+  .etapas { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
+  .etapa:nth-child(2n) .etapa-topo::after { display: none; }
 }
 
 @media (max-width: 860px) {
   .hero { grid-template-columns: 1fr; }
   .hero-lado { max-width: 440px; }
   .ficha { transform: none; }
-  .sobre { grid-template-columns: 1fr; }
   .projetos { grid-template-columns: 1fr; }
 
   /* Marca, troféu e som na primeira linha, menu inteiro embaixo */
@@ -1453,12 +1504,16 @@ a { color: inherit; }
 @media (max-width: 600px) {
   .som { width: 34px; height: 34px; }
   .hud { height: 34px; }
-  .etapas { grid-template-columns: 1fr; }
-  .etapa::after { display: none; }
+  .servicos { grid-template-columns: 1fr; }
+  /* As quatro abas cabem na largura do celular */
+  .abas { width: 100%; gap: 2px; }
+  .aba { padding: 9px 4px; font-size: 0.82rem; }
+  .etapas { grid-template-columns: 1fr; row-gap: 32px; }
+  .etapa .etapa-topo::after { display: none; }
   .fase { grid-template-columns: 64px 1fr; gap: 16px; }
   .fase-num { width: 64px; height: 48px; font-size: 0.85rem; }
   .fase:not(:last-child)::after { left: 31px; top: 56px; }
-  #jornada .moeda-escondida { left: calc(var(--gutter) + 19px); }
+  #jornada .moeda-escondida { left: 19px; }
   .terminal-botao { display: block; margin: 6px 0 0; }
   .stats dd { font-size: 1rem; }
   .pergunta summary { padding: 14px 16px; font-size: 1.02rem; }

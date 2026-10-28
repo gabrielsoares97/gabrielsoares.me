@@ -7,7 +7,7 @@ Meu site pessoal e portfólio, com cara de jogo 8-bit. No ar em **[gabrielsoares
 ## O que tem nele
 
 - **Ficha de personagem**: nível e barra de XP calculados pelos anos de carreira.
-- **Seções como fases**: sobre, serviços, conquistas, projetos, jornada e inventário de ferramentas.
+- **Seções como mundos**: o Mundo 1 mostra o que eu faço (serviços, como funciona e projetos), o Mundo 2 quem eu sou (sobre, conquistas, jornada e inventário, em abas) e o Mundo 3 tira dúvidas (perguntas frequentes). Faixas de nuvem de pixel separam um mundo do outro.
 - **Conquistas secretas** para o visitante, salvas no navegador, com painel de troféus e botão para desafiar um amigo.
 - **Moedas escondidas** pela página e um contador de likes compartilhado entre todos os visitantes.
 - **Fase bônus "Bug em produção"**: um minijogo de nave desenhado em canvas.

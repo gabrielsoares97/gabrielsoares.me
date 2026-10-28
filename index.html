@@ -116,9 +116,8 @@
     </a>
     <nav aria-label="Seções">
       <a href="#servicos">Serviços</a>
-      <a href="#conquistas">Conquistas</a>
       <a href="#projetos">Projetos</a>
-      <a href="#jornada" class="so-largo">Jornada</a>
+      <a href="#sobre">Sobre</a>
       <a href="#jogo">Jogar</a>
       <a href="#contato">Contato</a>
     </nav>
@@ -176,84 +175,78 @@
       </aside>
       </div>
 
-      <a class="comecar" href="#sobre">
+      <a class="comecar" href="#servicos">
         <span>Role para começar</span>
         <svg viewBox="0 0 7 5" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 0h7v1H6v1H5v1H4v1H3V3H2V2H1V1H0Z" /></svg>
       </a>
     </section>
 
-    <section class="secao sobre tem-moeda" id="sobre" aria-labelledby="t-sobre">
-      <div>
-        <p class="olho">Mundo 1-1</p>
-        <h2 id="t-sobre">Sobre mim</h2>
-      </div>
-      <div class="sobre-texto" id="sobre-texto"></div>
-    </section>
+    <!-- Mundo 1: o que eu faço. A faixa (uma nuvem grande) separa um mundo do outro. -->
+    <div class="faixa">
+      <section class="secao" id="servicos" aria-labelledby="t-servicos">
+        <div class="secao-cabeca">
+          <div>
+            <p class="olho">Mundo 1-1</p>
+            <h2 id="t-servicos">Serviços</h2>
+          </div>
+          <p>Escolha a sua missão. Atendo Balneário Piçarras, Itajaí, Navegantes, Penha e região, e clientes de todo o Brasil pela internet.</p>
+        </div>
+        <ul class="servicos" id="lista-servicos"></ul>
+      </section>
 
-    <section class="secao" id="servicos" aria-labelledby="t-servicos">
+      <section class="secao" id="processo" aria-labelledby="t-processo">
+        <div class="secao-cabeca">
+          <div>
+            <p class="olho">Mundo 1-2</p>
+            <h2 id="t-processo">Como funciona</h2>
+          </div>
+          <p>Do primeiro “oi” ao projeto no ar, são quatro etapas. Em todas elas, você fala direto comigo.</p>
+        </div>
+        <ol class="etapas" id="lista-processo"></ol>
+      </section>
+
+      <section class="secao" id="projetos" aria-labelledby="t-projetos">
+        <div class="secao-cabeca">
+          <div>
+            <p class="olho">Mundo 1-3</p>
+            <h2 id="t-projetos">Projetos</h2>
+          </div>
+          <p>Coisas que construí e coloquei no mundo.</p>
+        </div>
+        <div class="projetos" id="lista-projetos"></div>
+      </section>
+    </div>
+
+    <!-- Mundo 2: quem eu sou. Sobre, conquistas, jornada e inventário numa seção só, em abas. -->
+    <section class="secao tem-moeda" id="sobre" aria-labelledby="t-sobre">
       <div class="secao-cabeca">
         <div>
-          <p class="olho">Mundo 1-2</p>
-          <h2 id="t-servicos">Serviços</h2>
+          <p class="olho">Mundo 2</p>
+          <h2 id="t-sobre">Sobre mim</h2>
         </div>
-        <p>Escolha a sua missão. Atendo Balneário Piçarras, Itajaí, Navegantes, Penha e região, e clientes de todo o Brasil pela internet.</p>
+        <div class="abas" id="abas-sobre" role="tablist" aria-label="Sobre mim">
+          <button type="button" class="aba" role="tab" id="aba-sobre" aria-controls="painel-sobre" aria-selected="true">Quem sou</button>
+          <button type="button" class="aba" role="tab" id="aba-conquistas" aria-controls="conquistas" aria-selected="false" tabindex="-1">Conquistas</button>
+          <button type="button" class="aba" role="tab" id="aba-jornada" aria-controls="jornada" aria-selected="false" tabindex="-1">Jornada</button>
+          <button type="button" class="aba" role="tab" id="aba-inventario" aria-controls="inventario" aria-selected="false" tabindex="-1">Inventário</button>
+        </div>
       </div>
-      <ul class="servicos" id="lista-servicos"></ul>
-    </section>
 
-    <section class="secao" id="processo" aria-labelledby="t-processo">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-3</p>
-          <h2 id="t-processo">Como funciona</h2>
-        </div>
-        <p>Do primeiro “oi” ao projeto no ar, a missão tem quatro etapas. Em todas elas, você fala direto comigo.</p>
+      <div class="painel" id="painel-sobre" role="tabpanel" aria-labelledby="aba-sobre" tabindex="0">
+        <div class="sobre-texto" id="sobre-texto"></div>
       </div>
-      <ol class="etapas" id="lista-processo"></ol>
-    </section>
-
-    <section class="secao" id="conquistas" aria-labelledby="t-conquistas">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-4</p>
-          <h2 id="t-conquistas">Conquistas</h2>
-        </div>
-        <p id="conquistas-contagem"></p>
+      <div class="painel" id="conquistas" role="tabpanel" aria-labelledby="aba-conquistas" tabindex="0" hidden>
+        <p class="painel-intro" id="conquistas-contagem"></p>
+        <ul class="conquistas" id="lista-conquistas"></ul>
       </div>
-      <ul class="conquistas" id="lista-conquistas"></ul>
-    </section>
-
-    <section class="secao" id="projetos" aria-labelledby="t-projetos">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-5</p>
-          <h2 id="t-projetos">Projetos</h2>
-        </div>
-        <p>Coisas que construí e coloquei no mundo.</p>
+      <div class="painel tem-moeda" id="jornada" role="tabpanel" aria-labelledby="aba-jornada" tabindex="0" hidden>
+        <p class="painel-intro">Cada etapa foi uma fase. Esta é a ordem em que joguei.</p>
+        <ol class="fases" id="lista-jornada"></ol>
       </div>
-      <div class="projetos" id="lista-projetos"></div>
-    </section>
-
-    <section class="secao tem-moeda" id="jornada" aria-labelledby="t-jornada">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-6</p>
-          <h2 id="t-jornada">Jornada na tecnologia</h2>
-        </div>
-        <p>Cada etapa foi uma fase. Esta é a ordem em que joguei.</p>
+      <div class="painel" id="inventario" role="tabpanel" aria-labelledby="aba-inventario" tabindex="0" hidden>
+        <p class="painel-intro">As ferramentas que levo para qualquer fase.</p>
+        <div class="inventario" id="lista-inventario"></div>
       </div>
-      <ol class="fases" id="lista-jornada"></ol>
-    </section>
-
-    <section class="secao" id="inventario" aria-labelledby="t-inventario">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-7</p>
-          <h2 id="t-inventario">Inventário</h2>
-        </div>
-        <p>As ferramentas que levo para qualquer fase.</p>
-      </div>
-      <div class="inventario" id="lista-inventario"></div>
     </section>
 
     <section class="secao" id="jogo" aria-labelledby="t-jogo">
@@ -275,16 +268,19 @@
       </div>
     </section>
 
-    <section class="secao" id="perguntas" aria-labelledby="t-perguntas">
-      <div class="secao-cabeca">
-        <div>
-          <p class="olho">Mundo 1-8</p>
-          <h2 id="t-perguntas">Perguntas frequentes</h2>
+    <!-- Mundo 3: dúvidas e dicas -->
+    <div class="faixa">
+      <section class="secao" id="perguntas" aria-labelledby="t-perguntas">
+        <div class="secao-cabeca">
+          <div>
+            <p class="olho">Mundo 3-1</p>
+            <h2 id="t-perguntas">Perguntas frequentes</h2>
+          </div>
+          <p>As dúvidas que mais aparecem antes de começar um projeto.</p>
         </div>
-        <p>As dúvidas que mais aparecem antes de começar um projeto.</p>
-      </div>
-      <div class="perguntas" id="lista-perguntas"></div>
-    </section>
+        <div class="perguntas" id="lista-perguntas"></div>
+      </section>
+    </div>
 
     <section class="contato" id="contato" aria-labelledby="t-contato">
       <p class="olho">Fase final</p>
@@ -295,8 +291,8 @@
       <div class="contato-email">
         <a id="email-link" class="email-grande" href="#"></a>
         <div class="contato-email-acoes">
-          <button type="button" class="botao" id="copiar-email">Copiar e-mail</button>
-          <button type="button" class="botao" id="salvar-contato">Salvar contato</button>
+          <button type="button" class="botao leve" id="copiar-email">Copiar e-mail</button>
+          <button type="button" class="botao leve" id="salvar-contato">Salvar contato</button>
         </div>
       </div>
       <ul class="redes" id="lista-redes"></ul>

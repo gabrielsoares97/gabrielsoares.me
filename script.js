@@ -292,7 +292,7 @@
         ${s.inclui?.length ? `<ul class="servico-inclui">${s.inclui.map((t) => `<li>${esc(t)}</li>`).join("")}</ul>` : ""}
         <div class="servico-rodape">
           ${s.preco ? `<p class="servico-preco">${esc(s.preco)}</p>` : ""}
-          <a class="botao primario" href="${esc(linkOrcamento(s))}" target="_blank" rel="noopener">Pedir orçamento</a>
+          <a class="botao leve" href="${esc(linkOrcamento(s))}" target="_blank" rel="noopener">Pedir orçamento</a>
         </div>
       </li>`
     )
@@ -368,7 +368,7 @@
         <p>${esc(p.descricao)}</p>
         ${tagsHtml(p.tecnologias)}
         <div class="projeto-acoes">
-          <button type="button" class="botao${p.destaque ? " primario" : ""}" data-projeto="${i}">Saber mais</button>
+          <button type="button" class="botao ${p.destaque ? "primario" : "leve"}" data-projeto="${i}">Saber mais</button>
         </div>
       </article>`
     )
@@ -441,6 +441,43 @@
       </div>`
     )
     .join("");
+
+  /* ---------- Sobre mim: abas (quem sou, conquistas, jornada, inventário) ---------- */
+  // Setas ← → trocam de aba, como num menu de jogo. Só a aba aberta entra na ordem do Tab.
+  const listaAbas = $("abas-sobre");
+  const abas = [...listaAbas.querySelectorAll('[role="tab"]')];
+
+  function abrirAba(aba, focar = false) {
+    for (const a of abas) {
+      const ativa = a === aba;
+      a.setAttribute("aria-selected", String(ativa));
+      a.tabIndex = ativa ? 0 : -1;
+      $(a.getAttribute("aria-controls")).hidden = !ativa;
+    }
+    if (focar) aba.focus();
+  }
+
+  listaAbas.addEventListener("click", (e) => {
+    const aba = e.target.closest('[role="tab"]');
+    if (aba) abrirAba(aba);
+  });
+  listaAbas.addEventListener("keydown", (e) => {
+    const i = abas.indexOf(document.activeElement);
+    const destino = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: abas.length - 1 }[e.key];
+    if (i < 0 || destino === undefined) return;
+    e.preventDefault();
+    abrirAba(abas[(destino + abas.length) % abas.length], true);
+  });
+
+  // Endereços antigos (#conquistas, #jornada, #inventario) abrem a aba certa
+  function abaDoEndereco(rolar) {
+    const aba = abas.find((a) => `#${a.getAttribute("aria-controls")}` === location.hash);
+    if (!aba) return;
+    abrirAba(aba);
+    if (rolar) $("sobre").scrollIntoView({ behavior: semMovimento.matches ? "auto" : "smooth" });
+  }
+  addEventListener("hashchange", () => abaDoEndereco(true));
+  abaDoEndereco(false); // ao abrir a página, o próprio navegador rola até a aba, que já está visível
 
   /* ---------- Perguntas frequentes ---------- */
   $("lista-perguntas").innerHTML = (d.perguntas || [])
@@ -581,7 +618,7 @@
   $("email-link").textContent = d.email;
   $("email-link").href = `mailto:${d.email}`;
   $("lista-redes").innerHTML = d.links
-    .map((l) => `<li><a class="botao" href="${esc(l.url)}" target="_blank" rel="noopener">${iconeRede(l.nome)}${esc(l.nome)}</a></li>`)
+    .map((l) => `<li><a class="botao leve" href="${esc(l.url)}" target="_blank" rel="noopener">${iconeRede(l.nome)}${esc(l.nome)}</a></li>`)
     .join("");
   $("rodape-texto").textContent = `© ${hoje.getFullYear()} ${nomeCompleto}. Feito à mão, sem template.`;
 
