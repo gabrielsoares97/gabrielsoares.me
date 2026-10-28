@@ -23,6 +23,7 @@ HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Um pouco de PH
 |---|---|
 | `dados.js` | Todo o conteúdo do site (textos, projetos, conquistas, links). Editar aqui atualiza a página inteira. |
 | `script.js` | Monta as seções a partir de `dados.js` e cuida das animações, sons, conquistas e do minijogo. |
+| `ceu.js` | Céu de fundo (nuvens e estrelas) e botão dia/noite, usados na página inicial e no blog. |
 | `style.css` | Visual, temas claro/escuro e cursor de pixel. |
 | `api/likes.php` | Contador de likes. Grava o total em `api/likes.txt`, criado no primeiro acesso. |
 
