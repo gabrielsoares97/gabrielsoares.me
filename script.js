@@ -555,7 +555,6 @@
     .map(
       (p, i) => `
       <article class="projeto${p.destaque ? " destaque" : ""}">
-        ${p.imagens?.length ? `<img class="projeto-capa" src="${esc(p.imagens[0])}" alt="" loading="lazy">` : ""}
         ${p.destaque ? `<span class="selo-destaque">Projeto favorito</span>` : ""}
         <div>
           <h3>${esc(p.nome)}</h3>

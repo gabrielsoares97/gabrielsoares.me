@@ -16,7 +16,7 @@ const DADOS = {
 
   // Use *assim* para deixar uma palavra em itálico.
   sobre: [
-    "Sou o Gabriel, desenvolvedor full-stack em Balneário Piçarras. Desde 2021, coloquei no ar mais de 20 sites, um sistema de gestão para a JBL Transportes e dois aplicativos próprios.",
+    "Sou o Gabriel, desenvolvedor full-stack em Balneário Piçarras. Desde 2021, coloquei no ar mais de 20 sites, um sistema de gestão para a JBL Transportes e três aplicativos próprios.",
     "Antes de *codar*, trabalhei com tráfego pago e design. Por isso não penso só no código: penso em quem vai visitar o seu site, no que faz essa pessoa confiar em você e no que a leva a chamar no WhatsApp.",
     "Você fala direto comigo, do primeiro orçamento até o projeto no ar. Quase tudo o que sei aprendi na prática, resolvendo problemas de verdade. Nas horas vagas, estou aprendendo a criar jogos, o que explica as conquistas (e a fase bônus) espalhadas por aqui.",
   ],
@@ -163,7 +163,7 @@ const DADOS = {
   ],
 
   // Cada projeto abre uma janela no botão "Saber mais".
-  // imagens: lista de prints, ex.: ["prints/jbl-1.png", "prints/jbl-2.png"]. A primeira vira a capa do card.
+  // imagens: lista de prints, ex.: ["prints/jbl-1.png", "prints/jbl-2.png"]. Só aparecem na janela do "Saber mais".
   projetos: [
     {
       nome: "JBL Transportes",
@@ -179,6 +179,27 @@ const DADOS = {
       textoLink: "Acessar o painel",
       imagens: [],
       destaque: true,
+    },
+    {
+      nome: "MeuDisc",
+      tipo: "Aplicativo para Windows, Mac e Android",
+      descricao: "Uma sala privada para você e até 7 amigos: voz, câmera, tela em até 120 fps e um navegador que todo mundo usa junto.",
+      detalhes: [
+        "Uma sala só sua para jogar, assistir e conversar com os amigos, sem ninguém precisar criar conta. Cabem até 8 pessoas, com voz, câmera, chat, compartilhamento de tela em até 120 fps e um navegador que todo mundo usa ao mesmo tempo: clica, digita e rola a mesma página.",
+        "Tudo vai direto de um aparelho para o outro (P2P, com WebRTC), sem servidor no meio da transmissão. No Windows, a tela é capturada direto da placa de vídeo e, ao compartilhar uma janela, vai só o som daquele programa. Feito com Electron para Windows e Mac, e com um app Android que abre a mesma interface.",
+      ],
+      tecnologias: ["Electron", "WebRTC", "Node.js", "Android"],
+      link: "https://github.com/gabrielsoares97/meudisc",
+      textoLink: "Ver no GitHub",
+      imagens: [
+        "prints/meudisc-assistindo.jpg",
+        "prints/meudisc-sala.png",
+        "prints/meudisc-compartilhar.jpg",
+        "prints/meudisc-navegador.jpg",
+        "prints/meudisc-chat.jpg",
+        "prints/meudisc-celular-sala.png",
+        "prints/meudisc-celular-assistindo.jpg",
+      ],
     },
     {
       nome: "Apliki",
@@ -204,7 +225,14 @@ const DADOS = {
       tecnologias: [],
       link: "",
       textoLink: "",
-      imagens: [],
+      imagens: [
+        "prints/cursoflix-capa.jpg",
+        "prints/cursoflix-biblioteca.jpg",
+        "prints/cursoflix-curso.jpg",
+        "prints/cursoflix-player.jpg",
+        "prints/cursoflix-pdf.jpg",
+        "prints/cursoflix-notas.jpg",
+      ],
     },
   ],
 
@@ -228,7 +256,7 @@ const DADOS = {
       cargo: "Dev",
       lugar: "",
       descricao:
-        "Comecei a *codar* e não parei mais: mais de 20 sites entregues, o sistema da JBL Transportes e os apps Apliki e CursoFlix.",
+        "Comecei a *codar* e não parei mais: mais de 20 sites entregues, o sistema da JBL Transportes e os apps Apliki, CursoFlix e MeuDisc.",
     },
   ],
 

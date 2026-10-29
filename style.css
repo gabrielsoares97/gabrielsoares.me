@@ -861,15 +861,6 @@ a { color: inherit; }
 .projeto-tipo { margin-top: 4px; font-size: 0.95rem; font-weight: 600; opacity: 0.75; }
 .projeto.destaque .projeto-tipo { color: var(--moeda); opacity: 1; }
 
-.projeto-capa {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  object-position: top;
-  border: 2px solid var(--contorno);
-  border-radius: 10px;
-}
-
 .projeto-acoes { margin-top: auto; padding-top: 8px; }
 .projeto.destaque .botao { box-shadow: 4px 4px 0 var(--ceu); }
 
