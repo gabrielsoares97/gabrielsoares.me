@@ -1487,14 +1487,12 @@ a { color: inherit; }
 }
 .like:hover { transform: translate(-1px, -1px); box-shadow: 5px 5px 0 var(--contorno); }
 .like:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--contorno); }
+/* Só o emoji, sem círculo atrás: um fundo amarelo apagava o 👍 */
 .like-icone {
   display: grid;
   place-items: center;
-  width: 30px;
   height: 30px;
-  border-radius: 50%;
-  background: var(--moeda);
-  font-size: 1rem;
+  font-size: 1.25rem;
 }
 .like.batida .like-icone { animation: like-batida 0.25s ease-out; }
 @keyframes like-batida { 50% { transform: scale(1.3) rotate(-12deg); } }
