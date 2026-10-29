@@ -16,6 +16,7 @@ Meu site pessoal e portfólio, com cara de jogo 8-bit. No ar em **[gabrielsoares
 - **Dia e noite**: nuvens de pixel no modo claro, estrelas no escuro.
 - **Blog "Diário de bordo"**: posts escritos em texto simples (Markdown) e transformados em páginas pelo `gerar-blog.js`, com feed RSS e a conquista secreta "Leitor de bordo".
 - **SEO local**: dados estruturados (schema.org), sitemap e robots.txt.
+- **Medição de visitas com consentimento**: o Google Analytics só carrega depois do "Aceitar" no aviso de cookies, e mede quantos visitantes clicam para chamar no WhatsApp.
 
 ## Como é feito
 
@@ -26,10 +27,12 @@ HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Um pouco de PH
 | `dados.js` | Todo o conteúdo do site (textos, projetos, conquistas, links). Editar aqui atualiza a página inteira. |
 | `script.js` | Monta as seções a partir de `dados.js` e cuida das animações, sons, conquistas e do minijogo. |
 | `ceu.js` | Céu de fundo (nuvens e estrelas) e botão dia/noite, usados na página inicial e no blog. |
+| `medicao.js` | Aviso de cookies, Google Analytics (só depois do "Aceitar") e o evento de clique no WhatsApp. O ID do Analytics fica no topo do arquivo. |
 | `style.css` | Visual, temas claro/escuro e cursor de pixel. Vale para o site inteiro, blog incluído. |
 | `posts/` | Os textos do blog, um arquivo `.md` por post. `_modelo.md` mostra como escrever. |
-| `gerar-blog.js` | Transforma `posts/` nas páginas de `blog/`, refaz o `sitemap.xml` e a seção do blog no `index.html`. |
-| `blog/` | Gerada pelo `gerar-blog.js`. Não edite à mão. |
+| `paginas/` | Páginas avulsas em `.md`, como a política de privacidade (`privacidade.md`). |
+| `gerar-blog.js` | Transforma `posts/` nas páginas de `blog/` e `paginas/` em páginas como `privacidade/`, refaz o `sitemap.xml` e a seção do blog no `index.html`. |
+| `blog/`, `privacidade/` | Geradas pelo `gerar-blog.js`. Não edite à mão. |
 | `blog.js` | Barra de leitura, conquistas e "Copiar link" nas páginas do blog. |
 | `api/likes.php` | Contador de likes. Grava o total em `api/likes.txt`, criado no primeiro acesso. |
 
@@ -57,6 +60,18 @@ HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Um pouco de PH
 1. Coloque o MP3 na pasta `musica/`.
 2. Em `dados.js`, aponte `musica.dia` (e, se quiser, `musica.noite`) para o arquivo.
 3. Se a música termina em fade ou silêncio, preencha `loop` com o trecho que se repete, em segundos. O fim precisa cair no começo de um compasso, no mesmo ponto da música em que o trecho começa. Para achar o tamanho de um compasso, divida 240 pelo BPM: a 90 BPM, um compasso dura 2,67 s.
+
+## Medindo as visitas (Google Analytics)
+
+1. No [Google Analytics](https://analytics.google.com), crie uma propriedade com um fluxo de dados da Web para `gabrielsoares.me` e copie o ID (começa com `G-`).
+2. Cole o ID em `ID_ANALYTICS`, no topo do `medicao.js`. Com o ID vazio, o aviso de cookies não aparece e nada é medido.
+3. Ainda no Analytics, em **Administrador**:
+   - **Definições personalizadas**: crie as dimensões `origem` e `servico`, as duas com escopo de evento. `origem` diz de onde veio o clique no WhatsApp (`servicos`, `monte_sua_missao`, `fase_bonus`, `fim_do_post`, `contato`, `terminal`, `console` ou `outro`). `servico` diz qual serviço, quando o clique foi no "Pedir orçamento".
+   - **Eventos principais**: marque `clique_whatsapp`, que aparece na lista depois do primeiro clique.
+   - **Retenção de dados**: troque para 14 meses, o prazo que a página de privacidade promete como máximo.
+4. Troque o `?v=` no `index.html`, rode `node gerar-blog.js` e suba os arquivos alterados.
+
+O texto da política fica em `paginas/privacidade.md`. Se o site passar a medir outra coisa, atualize a política junto.
 
 ## Rodando localmente
 

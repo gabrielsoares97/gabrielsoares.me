@@ -4,7 +4,9 @@
 //   node gerar-blog.js --rascunhos  prévia com os rascunhos, para revisar no navegador (não suba assim)
 //
 // Cria blog/ (lista de posts, uma página por post e feed.xml), refaz o sitemap.xml e atualiza
-// a seção "Diário de bordo" do index.html. Não precisa instalar nada: só o Node.
+// a seção "Diário de bordo" do index.html. Também gera as páginas avulsas da pasta paginas/,
+// como privacidade.md -> privacidade/index.html, com o mesmo topo e rodapé do blog.
+// Não precisa instalar nada: só o Node.
 
 const fs = require("fs");
 const path = require("path");
@@ -14,6 +16,7 @@ const SITE = "https://gabrielsoares.me";
 const PASTA = __dirname;
 const PASTA_POSTS = path.join(PASTA, "posts");
 const PASTA_BLOG = path.join(PASTA, "blog");
+const PASTA_PAGINAS = path.join(PASTA, "paginas");
 const COM_RASCUNHOS = process.argv.includes("--rascunhos");
 const GERADO = "<!-- Gerado pelo gerar-blog.js a partir da pasta posts/. Edite o post lá, não aqui. -->";
 
@@ -130,49 +133,51 @@ function markdown(md, arquivo, ids = new Set()) {
 
 const minutosDeLeitura = (md) => Math.max(1, Math.round(md.split(/\s+/).filter((p) => /\w/.test(p)).length / 200));
 
-/* ---------- Leitura dos posts ---------- */
+/* ---------- Leitura dos posts e das páginas ---------- */
 
 const avisos = [];
 function aviso(arquivo, texto) {
   avisos.push(`${arquivo}: ${texto}`);
 }
 function falhar(arquivo, texto) {
-  console.error(`\n✗ posts/${arquivo}: ${texto}\n`);
+  console.error(`\n✗ ${arquivo}: ${texto}\n`);
   process.exit(1);
 }
 
-function lerPosts() {
-  if (!fs.existsSync(PASTA_POSTS)) return [];
+// Lê os textos de uma pasta: os posts (posts/) ou as páginas avulsas (paginas/)
+function lerTextos(pasta) {
+  if (!fs.existsSync(pasta)) return [];
   return fs
-    .readdirSync(PASTA_POSTS)
-    .filter((f) => f.endsWith(".md") && !f.startsWith("_")) // _modelo.md e afins não viram post
+    .readdirSync(pasta)
+    .filter((f) => f.endsWith(".md") && !f.startsWith("_")) // _modelo.md e afins não viram página
     .map((arquivo) => {
-      const bruto = fs.readFileSync(path.join(PASTA_POSTS, arquivo), "utf8").replace(/^﻿/, "").replace(/\r\n?/g, "\n");
+      const nome = `${path.basename(pasta)}/${arquivo}`;
+      const bruto = fs.readFileSync(path.join(pasta, arquivo), "utf8").replace(/^﻿/, "").replace(/\r\n?/g, "\n");
       const m = bruto.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
-      if (!m) falhar(arquivo, "o post precisa começar com o cabeçalho entre duas linhas ---.");
+      if (!m) falhar(nome, "o texto precisa começar com o cabeçalho entre duas linhas ---.");
 
       const meta = {};
       for (const linha of m[1].split("\n")) {
         if (!linha.trim() || linha.trim().startsWith("#")) continue;
         const i = linha.indexOf(":");
-        if (i < 0) falhar(arquivo, `linha do cabeçalho sem "chave: valor": ${linha}`);
+        if (i < 0) falhar(nome, `linha do cabeçalho sem "chave: valor": ${linha}`);
         const valor = linha.slice(i + 1).trim().replace(/^(["'])(.*)\1$/, "$2");
         meta[linha.slice(0, i).trim()] = valor === "true" ? true : valor === "false" ? false : valor;
       }
-      for (const c of ["titulo", "descricao", "data"]) if (!meta[c]) falhar(arquivo, `falta "${c}:" no cabeçalho.`);
+      for (const c of ["titulo", "descricao", "data"]) if (!meta[c]) falhar(nome, `falta "${c}:" no cabeçalho.`);
       for (const c of ["data", "atualizado"]) {
-        if (meta[c] && !/^\d{4}-\d{2}-\d{2}$/.test(meta[c])) falhar(arquivo, `"${c}" precisa ser no formato ano-mês-dia, ex.: 2026-10-28.`);
+        if (meta[c] && !/^\d{4}-\d{2}-\d{2}$/.test(meta[c])) falhar(nome, `"${c}" precisa ser no formato ano-mês-dia, ex.: 2026-10-28.`);
       }
 
       const slug = arquivo.replace(/\.md$/, "");
       if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
-        falhar(arquivo, "o nome do arquivo vira o endereço do post: use só letras minúsculas sem acento, números e hífens.");
+        falhar(nome, "o nome do arquivo vira o endereço da página: use só letras minúsculas sem acento, números e hífens.");
       }
       // O Google corta títulos e descrições compridos nos resultados
-      if (meta.titulo.length > 70) aviso(arquivo, `título com ${meta.titulo.length} caracteres: o Google costuma cortar depois de uns 60.`);
-      if (meta.descricao.length > 160) aviso(arquivo, `descrição com ${meta.descricao.length} caracteres: o Google costuma cortar depois de uns 155.`);
+      if (meta.titulo.length > 70) aviso(nome, `título com ${meta.titulo.length} caracteres: o Google costuma cortar depois de uns 60.`);
+      if (meta.descricao.length > 160) aviso(nome, `descrição com ${meta.descricao.length} caracteres: o Google costuma cortar depois de uns 155.`);
 
-      const { html, indice, links } = markdown(m[2], arquivo);
+      const { html, indice, links } = markdown(m[2], nome);
       return { ...meta, slug, rascunho: meta.rascunho === true, html, indice, links, minutos: minutosDeLeitura(m[2]) };
     })
     .sort((a, b) => b.data.localeCompare(a.data) || a.titulo.localeCompare(b.titulo));
@@ -191,7 +196,8 @@ function cartao(p, prefixo, nivel) {
       </li>`;
 }
 
-function pagina({ titulo, descricao, caminho, raiz, tipo, robots, dados, extraHead = "", corpo }) {
+// atual: "blog" marca o Blog no menu como a página em que o visitante está
+function pagina({ titulo, descricao, caminho, raiz, tipo, robots, dados, extraHead = "", corpo, atual = "blog" }) {
   const url = `${SITE}/${caminho}`;
   return `<!doctype html>
 ${GERADO}
@@ -246,7 +252,7 @@ ${jsonLd(dados)}
       <a href="${raiz}#projetos">Projetos</a>
       <a href="${raiz}#sobre">Sobre</a>
       <a href="${raiz}#jogo" class="so-largo">Jogar</a>
-      <a href="${raiz}blog/" aria-current="page">Blog</a>
+      <a href="${raiz}blog/"${atual === "blog" ? ' aria-current="page"' : ""}>Blog</a>
       <a href="${raiz}#contato">Contato</a>
     </nav>
     <button type="button" class="som tema" id="tema" aria-pressed="false" aria-label="Modo noite" title="Trocar entre dia e noite"></button>
@@ -258,11 +264,12 @@ ${corpo}
 
   <footer class="rodape">
     <p>© ${new Date().getFullYear()} ${esc(NOME)}. Feito à mão, sem template.</p>
-    <p><a class="botao-link" href="${raiz}">Voltar para o site</a> <a class="botao-link" href="${raiz}blog/feed.xml">RSS</a></p>
+    <p><a class="botao-link" href="${raiz}">Voltar para o site</a> <a class="botao-link" href="${raiz}blog/feed.xml">RSS</a> <a class="botao-link" href="${raiz}privacidade/">Privacidade</a></p>
   </footer>
 
   ${tipo === "article" ? `<div class="progresso" id="progresso" aria-hidden="true"></div>\n  ` : ""}<div class="toasts" id="toasts" aria-live="polite" popover="manual"></div>
 
+  <script src="${raiz}medicao.js?v=${VERSAO}"></script>
   <script src="${raiz}ceu.js?v=${VERSAO}"></script>
   <script src="${raiz}blog.js?v=${VERSAO}"></script>
 </body>
@@ -429,6 +436,42 @@ function paginaLista(posts) {
   });
 }
 
+// Página avulsa (paginas/*.md): só o texto, sem data de post, convite nem "Continue lendo".
+// Fica fora do sitemap e do Google: serve para quem procura, como a política de privacidade.
+function paginaAvulsa(p) {
+  const url = `${SITE}/${p.slug}/`;
+  const corpo = `    <article class="post">
+      <header class="post-cabeca">
+        <nav class="migalhas" aria-label="Você está aqui"><a href="../">Início</a> <span aria-hidden="true">›</span> ${esc(p.titulo)}</nav>
+        <h1>${esc(p.titulo)}</h1>
+        <p class="post-resumo">${esc(p.descricao)}</p>
+        <p class="post-meta"><span>Atualizada em <strong>${dataLonga(p.atualizado || p.data)}</strong></span></p>
+      </header>
+
+      <div class="post-corpo">
+${p.html}
+      </div>
+    </article>`;
+
+  return pagina({
+    titulo: `${p.titulo} | ${NOME}`,
+    descricao: p.descricao,
+    caminho: `${p.slug}/`,
+    raiz: "../",
+    tipo: "website",
+    robots: "noindex, follow",
+    atual: "",
+    dados: {
+      "@context": "https://schema.org",
+      "@graph": [
+        { "@type": "WebPage", "@id": `${url}#pagina`, name: p.titulo, description: p.descricao, url, inLanguage: "pt-BR" },
+        migalhas([["Início", `${SITE}/`], [p.titulo, url]]),
+      ],
+    },
+    corpo,
+  });
+}
+
 function secaoInicio(posts) {
   if (!posts.length) return "";
   // Fica dentro da faixa do Mundo 3, logo depois das perguntas frequentes
@@ -499,7 +542,8 @@ function gravar(relativo, conteudo) {
   gravados.push(relativo);
 }
 
-const todos = lerPosts();
+const todos = lerTextos(PASTA_POSTS);
+const paginas = lerTextos(PASTA_PAGINAS);
 const publicados = todos.filter((p) => !p.rascunho);
 const visiveis = COM_RASCUNHOS ? todos : publicados;
 const slugsVisiveis = new Set(visiveis.map((p) => p.slug));
@@ -523,6 +567,7 @@ for (const p of visiveis) gravar(`blog/${p.slug}/index.html`, paginaPost(p, visi
 gravar("blog/index.html", paginaLista(visiveis));
 gravar("blog/feed.xml", feed(publicados));
 gravar("sitemap.xml", sitemap(publicados, dataDoSite));
+for (const p of paginas) gravar(`${p.slug}/index.html`, paginaAvulsa(p));
 
 // Seção na página inicial, entre os marcadores
 const INICIO = "<!-- blog:inicio -->";
@@ -552,6 +597,7 @@ for (const pasta of fs.existsSync(PASTA_BLOG) ? fs.readdirSync(PASTA_BLOG, { wit
 const rascunhos = todos.length - publicados.length;
 console.log(`\nDiário de bordo: ${publicados.length} post(s) publicado(s), ${rascunhos} rascunho(s).`);
 for (const p of visiveis) console.log(`  ${p.rascunho ? "[rascunho] " : ""}blog/${p.slug}/  (${p.minutos} min)`);
+if (paginas.length) console.log(`Páginas avulsas: ${paginas.map((p) => `${p.slug}/`).join(", ")}`);
 console.log(gravados.length ? `\nArquivos atualizados:\n${gravados.map((g) => `  ${g}`).join("\n")}` : "\nNada mudou.");
 if (avisos.length) console.log(`\nAvisos:\n${avisos.map((t) => `  ⚠ ${t}`).join("\n")}`);
 if (COM_RASCUNHOS && rascunhos) {

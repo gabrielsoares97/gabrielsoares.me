@@ -1755,6 +1755,32 @@ a { color: inherit; }
 .post-compartilhar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 22px; font-size: 0.95rem; color: var(--tinta-suave); }
 .post-compartilhar .botao-link { margin-left: 0; }
 
+/* ---------- Aviso de cookies (medicao.js) ---------- */
+/* Caixa de diálogo de jogo no canto da tela: não bloqueia a página e some depois da escolha */
+.aviso-cookies {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--altura-progresso) + 12px);
+  z-index: 46; /* por cima do botão de like */
+  display: grid;
+  gap: 8px;
+  width: min(380px, calc(100vw - 32px));
+  padding: 18px 20px 20px;
+  background: var(--papel);
+  color: var(--tinta);
+  border: 2px solid var(--contorno);
+  border-radius: 16px;
+  box-shadow: var(--sombra-grande);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  animation: modal-abre 0.25s ease-out;
+}
+.aviso-cookies[hidden] { display: none; }
+.aviso-cookies-titulo { font: 800 1.15rem/1.2 var(--fonte-titulo); }
+.aviso-cookies-estado { color: var(--tinta-suave); font-size: 0.85rem; }
+.aviso-cookies-acoes { display: flex; gap: 10px; margin-top: 8px; }
+.aviso-cookies-acoes .botao { flex: 1; justify-content: center; }
+
 /* ---------- Responsivo ---------- */
 @media (max-width: 1000px) {
   .so-largo { display: none; }
@@ -1798,6 +1824,7 @@ a { color: inherit; }
   .fase:not(:last-child)::after { left: 31px; top: 56px; }
   #jornada .moeda-escondida { left: 19px; }
   .terminal-botao { display: block; margin: 6px 0 0; }
+  .terminal-botao + .botao-link { margin-left: 0; } /* "Privacidade", alinhado embaixo do terminal */
   .stats dd { font-size: 1rem; }
   .pergunta summary { padding: 14px 16px; font-size: 1.02rem; }
   .pergunta-resposta { padding: 0 16px 16px; }

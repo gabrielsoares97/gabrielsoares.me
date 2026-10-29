@@ -1932,6 +1932,7 @@
       fn: () => {
         window.open(linkContratar, "_blank", "noopener");
         desbloquear("missao");
+        if (linkWhats) medir("clique_whatsapp", { origem: "terminal" }); // abre sem link, então o medicao.js não vê o clique
         return "Abrindo o WhatsApp... 🚀";
       },
     },
@@ -2086,6 +2087,7 @@
     contratar() {
       window.open(linkContratar, "_blank", "noopener");
       desbloquear("missao");
+      if (linkWhats) medir("clique_whatsapp", { origem: "console" });
       return "Abrindo o WhatsApp... 🚀";
     },
     terminal() {
