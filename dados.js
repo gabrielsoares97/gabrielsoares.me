@@ -202,6 +202,26 @@ const DADOS = {
       ],
     },
     {
+      nome: "DualSense Studio",
+      tipo: "Programa para Windows",
+      descricao: "Libera no PC tudo o que o controle do PS5 faz: gatilhos adaptativos, vibração HD, alto-falante, microfone e sensores de movimento.",
+      detalhes: [
+        "No computador, o DualSense funciona como um controle comum: os gatilhos não resistem, a vibração HD fica parada e o alto-falante e o microfone não fazem nada. O DualSense Studio conversa direto com o controle e libera cada recurso, com o controle desenhado na tela respondendo ao vivo a cada botão, dedo no touchpad e mudança de cor da luz.",
+        "Dá para programar a resistência dos gatilhos, sentir uma bola rolando dentro do controle ao inclinar, transformar o som do PC em vibração, usar o touchpad e o giroscópio como mouse e salvar tudo em perfis. Funciona pelo cabo e também pelo Bluetooth, onde o áudio é comprimido em Opus e enviado dentro dos próprios comandos do controle.",
+      ],
+      tecnologias: ["JavaScript", "WebHID", "Web Audio", "Node.js"],
+      link: "https://github.com/gabrielsoares97/dualsense-studio",
+      textoLink: "Ver no GitHub",
+      imagens: [
+        "prints/dualsense-entradas.jpg",
+        "prints/dualsense-gatilhos.jpg",
+        "prints/dualsense-hapticos.jpg",
+        "prints/dualsense-movimento.jpg",
+        "prints/dualsense-luzes.jpg",
+        "prints/dualsense-modo-pc.jpg",
+      ],
+    },
+    {
       nome: "Apliki",
       tipo: "Aplicativo para Android",
       descricao: "App que ajuda pessoas a acompanhar e manter a rotina de emagrecimento, direto no celular.",
@@ -256,7 +276,7 @@ const DADOS = {
       cargo: "Dev",
       lugar: "",
       descricao:
-        "Comecei a *codar* e não parei mais: mais de 20 sites entregues, o sistema da JBL Transportes e os apps Apliki, CursoFlix e MeuDisc.",
+        "Comecei a *codar* e não parei mais: mais de 20 sites entregues, o sistema da JBL Transportes e os apps Apliki, CursoFlix, MeuDisc e DualSense Studio.",
     },
   ],
 
