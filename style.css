@@ -905,16 +905,18 @@ a { color: inherit; }
   gap: 12px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
+  align-items: center; /* sem isso o flex estica a altura das fotos */
   margin: 0 0 24px;
   padding: 0 0 8px;
 }
 .modal-galeria:empty { display: none; }
+/* Limites de largura e altura, sem tamanho fixo: a foto encolhe inteira, sem cortar nem achatar */
 .modal-galeria img {
   flex: 0 0 auto;
   width: auto;
+  height: auto;
   max-width: 90%;
-  height: clamp(200px, 40vh, 340px);
-  object-fit: cover;
+  max-height: clamp(200px, 40vh, 340px);
   border: 2px solid var(--contorno);
   border-radius: 12px;
   scroll-snap-align: start;
