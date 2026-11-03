@@ -564,6 +564,7 @@
         ${tagsHtml(p.tecnologias)}
         <div class="projeto-acoes">
           <button type="button" class="botao ${p.destaque ? "primario" : "leve"}" data-projeto="${i}">Saber mais</button>
+          ${p.imagens?.length ? `<span class="projeto-telas">📸 ${p.imagens.length} ${p.imagens.length === 1 ? "tela" : "telas"}</span>` : ""}
         </div>
       </article>`
     )
