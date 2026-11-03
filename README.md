@@ -31,8 +31,9 @@ HTML, CSS e JavaScript puros, sem framework e sem etapa de build. Um pouco de PH
 | `style.css` | Visual, temas claro/escuro e cursor de pixel. Vale para o site inteiro, blog incluído. |
 | `posts/` | Os textos do blog, um arquivo `.md` por post. `_modelo.md` mostra como escrever. |
 | `paginas/` | Páginas avulsas em `.md`, como a política de privacidade (`privacidade.md`). |
-| `gerar-blog.js` | Transforma `posts/` nas páginas de `blog/` e `paginas/` em páginas como `privacidade/`, refaz o `sitemap.xml` e a seção do blog no `index.html`. |
-| `blog/`, `privacidade/` | Geradas pelo `gerar-blog.js`. Não edite à mão. |
+| `gerar-blog.js` | Transforma `posts/` nas páginas de `blog/` e `paginas/` em páginas como `privacidade/`, gera o `404.html`, refaz o `sitemap.xml` e, no `index.html`, a seção do blog e o conteúdo para quem não roda JavaScript. |
+| `blog/`, `privacidade/`, `404.html` | Gerados pelo `gerar-blog.js`. Não edite à mão. |
+| `.htaccess` | Página de erro 404, redirecionamento do www e proteções básicas do navegador. |
 | `blog.js` | Barra de leitura, conquistas e "Copiar link" nas páginas do blog. |
 | `api/likes.php` | Contador de likes. Grava o total em `api/likes.txt`, criado no primeiro acesso. |
 

@@ -1,0 +1,15 @@
+# Endereço que não existe mostra a página de erro no estilo do site
+ErrorDocument 404 /404.html
+
+# Um endereço só para o Google: www vai para o domínio sem www
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTP_HOST} ^www\.gabrielsoares\.me$ [NC]
+  RewriteRule ^ https://gabrielsoares.me%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+# Proteções básicas do navegador
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
