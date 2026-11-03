@@ -154,6 +154,12 @@ const DADOS = {
       raridade: "rara",
     },
     {
+      icone: "💻",
+      titulo: "Código público no GitHub",
+      descricao: "O MeuDisc e o DualSense Studio estão abertos para quem quiser ver como foram feitos.",
+      raridade: "rara",
+    },
+    {
       icone: "🎓",
       titulo: "Análise e Desenvolvimento de Sistemas",
       descricao: "Graduação na Uniasselvi.",
@@ -281,10 +287,11 @@ const DADOS = {
   ],
 
   inventario: [
-    { grupo: "Linguagens", itens: ["HTML", "CSS", "JavaScript", "Python"] },
-    { grupo: "Front-end", itens: ["React", "Next.js", "UI Design"] },
-    { grupo: "Back-end", itens: ["Node.js", "MySQL", "Firebase"] },
-    { grupo: "Ferramentas", itens: ["Claude Code", "Cloudflare"] },
+    { grupo: "Linguagens", itens: ["HTML", "CSS", "JavaScript", "TypeScript", "Python"] },
+    { grupo: "Front-end", itens: ["React", "Next.js", "Tailwind CSS", "UI Design"] },
+    { grupo: "Back-end", itens: ["Node.js", "Express", "Prisma", "MySQL", "Firebase"] },
+    { grupo: "Apps e tempo real", itens: ["Electron", "WebRTC"] },
+    { grupo: "Ferramentas", itens: ["Claude Code", "Cloudflare", "Docker"] },
     { grupo: "Trazidos das fases 1 e 2", itens: ["Tráfego pago", "Design"] },
   ],
 
