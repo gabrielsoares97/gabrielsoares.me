@@ -5,7 +5,8 @@
 //
 // Cria blog/ (lista de posts, uma página por post e feed.xml), refaz o sitemap.xml e atualiza
 // a seção "Diário de bordo" do index.html. Também gera as páginas avulsas da pasta paginas/,
-// como privacidade.md -> privacidade/index.html, com o mesmo topo e rodapé do blog.
+// como privacidade.md -> privacidade/index.html, com o mesmo topo e rodapé do blog, a página
+// de erro 404.html e o conteúdo do index.html para quem não roda JavaScript.
 // Não precisa instalar nada: só o Node.
 
 const fs = require("fs");
@@ -22,8 +23,8 @@ const GERADO = "<!-- Gerado pelo gerar-blog.js a partir da pasta posts/. Edite o
 
 const NOME_BLOG = "Diário de bordo";
 const INTRO_BLOG = "Dicas práticas para colocar a sua empresa na internet: sites, Google e Instagram, explicados sem complicação.";
-
 const IMAGEM_COMPARTILHAR = `${SITE}/logo/compartilhar.png`;
+
 const D = vm.runInNewContext(`${fs.readFileSync(path.join(PASTA, "dados.js"), "utf8")}\nDADOS;`);
 const NOME = `${D.nome} ${D.sobrenome}`.trim();
 const indexHtml = fs.readFileSync(path.join(PASTA, "index.html"), "utf8");
@@ -473,6 +474,58 @@ ${p.html}
   });
 }
 
+// Página de erro. A raiz é absoluta porque ela aparece em qualquer endereço que não existe.
+function pagina404() {
+  const corpo = `    <section class="secao blog-topo fase-perdida" id="fase-perdida" aria-labelledby="t-404">
+      <p class="fase-perdida-vidas" aria-hidden="true">❤️ ❤️ 🖤</p>
+      <p class="olho">Erro 404</p>
+      <h1 id="t-404">Essa fase não existe.</h1>
+      <p class="blog-intro">O link pode estar errado, ou a página mudou de lugar. Mas calma: você ainda tem vidas.</p>
+      <div class="acoes">
+        <a class="botao primario" href="/">Voltar ao início</a>
+        <a class="botao" href="/blog/">Ler o blog</a>
+        <a class="botao" href="/#contato">Falar comigo</a>
+      </div>
+    </section>`;
+
+  return pagina({
+    titulo: `Página não encontrada | ${NOME}`,
+    descricao: "Essa página não existe. Volte ao início ou fale comigo.",
+    caminho: "404.html",
+    raiz: "/",
+    tipo: "website",
+    robots: "noindex, follow",
+    atual: "",
+    dados: { "@context": "https://schema.org", "@type": "WebPage", name: "Página não encontrada", inLanguage: "pt-BR" },
+    corpo,
+  });
+}
+
+// O conteúdo do dados.js em HTML puro, para quem não roda JavaScript, como alguns buscadores e robôs.
+// Com JavaScript ligado, o navegador ignora este bloco e o script.js monta a página normal.
+function conteudoSemJs() {
+  const whats = D.links.find((l) => l.nome === "WhatsApp");
+  return `
+    <noscript>
+      <section class="secao">
+        <p>${esc(D.resumo)}</p>
+        <h2>Serviços</h2>
+        <ul>
+          ${D.servicos.map((s) => `<li><strong>${esc(s.nome)}:</strong> ${esc(s.descricao)}</li>`).join("\n          ")}
+        </ul>
+        <h2>Projetos</h2>
+        <ul>
+          ${D.projetos.map((p) => `<li><strong>${esc(p.nome)}</strong> (${esc(p.tipo)}): ${esc(p.descricao)}</li>`).join("\n          ")}
+        </ul>
+        <h2>Perguntas frequentes</h2>
+        ${D.perguntas.map((q) => `<h3>${esc(q.pergunta)}</h3>\n        <p>${esc(q.resposta)}</p>`).join("\n        ")}
+        <h2>Contato</h2>
+        <p>${whats ? `<a href="${esc(whats.url)}">WhatsApp</a> · ` : ""}<a href="mailto:${esc(D.email)}">${esc(D.email)}</a></p>
+      </section>
+    </noscript>
+    `;
+}
+
 function secaoInicio(posts) {
   if (!posts.length) return "";
   // Fica dentro da faixa do Mundo 3, logo depois das perguntas frequentes
@@ -570,16 +623,21 @@ gravar("blog/feed.xml", feed(publicados));
 gravar("sitemap.xml", sitemap(publicados, dataDoSite));
 for (const p of paginas) gravar(`${p.slug}/index.html`, paginaAvulsa(p));
 
-// Seção na página inicial, entre os marcadores
-const INICIO = "<!-- blog:inicio -->";
-const FIM = "<!-- blog:fim -->";
-const a = indexHtml.indexOf(INICIO);
-const b = indexHtml.indexOf(FIM);
-if (a < 0 || b < a) {
-  aviso("index.html", `não achei os marcadores ${INICIO} e ${FIM}: a seção do blog na página inicial não foi atualizada.`);
-} else {
-  gravar("index.html", indexHtml.slice(0, a + INICIO.length) + secaoInicio(visiveis) + indexHtml.slice(b));
+gravar("404.html", pagina404());
+
+// Página inicial: o conteúdo gerado fica entre os marcadores
+function entreMarcadores(html, nome, conteudo) {
+  const inicio = `<!-- ${nome}:inicio -->`;
+  const fim = `<!-- ${nome}:fim -->`;
+  const a = html.indexOf(inicio);
+  const b = html.indexOf(fim);
+  if (a < 0 || b < a) {
+    aviso("index.html", `não achei os marcadores ${inicio} e ${fim}: essa parte da página inicial não foi atualizada.`);
+    return html;
+  }
+  return html.slice(0, a + inicio.length) + conteudo + html.slice(b);
 }
+gravar("index.html", entreMarcadores(entreMarcadores(indexHtml, "blog", secaoInicio(visiveis)), "sem-js", conteudoSemJs()));
 
 // Apaga a página de post que saiu (renomeado, apagado ou voltou a ser rascunho). Só mexe no que este script gerou.
 for (const pasta of fs.existsSync(PASTA_BLOG) ? fs.readdirSync(PASTA_BLOG, { withFileTypes: true }) : []) {

@@ -34,6 +34,7 @@
   // Mesmos ids e títulos do SECRETAS no script.js
   const CONQUISTAS = {
     leitor: { icone: "📖", titulo: "Leitor de bordo" },
+    perdido: { icone: "🧭", titulo: "Fora do mapa" },
     tema: { icone: "🌗", titulo: "Ciclo dia e noite" },
   };
   const CHAVE = "gs-conquistas";
@@ -77,6 +78,9 @@
   }
 
   addEventListener("gs:tema", () => desbloquear("tema"));
+
+  // "Fora do mapa": caiu na página 404
+  if ($("fase-perdida")) desbloquear("perdido");
 
   // "Leitor de bordo": chegou ao convite do fim do post
   const fimDoPost = $("fim-do-post");

@@ -873,6 +873,7 @@
     { id: "visita", icone: "👋", titulo: "Visitante curioso", dica: "Comece a explorar o site." },
     { id: "fim", icone: "🏁", titulo: "Leu até o fim", dica: "Chegue ao fim da página." },
     { id: "leitor", icone: "📖", titulo: "Leitor de bordo", dica: "Leia um post do blog até o fim." }, // desbloqueada pelo blog.js
+    { id: "perdido", icone: "🧭", titulo: "Fora do mapa", dica: "Encontre uma página que não existe." }, // desbloqueada pelo blog.js, na página 404
     { id: "ida-e-volta", icone: "🚀", titulo: "Ida e volta", dica: "Vá até o fim da página e volte ao topo." },
     { id: "projetos", icone: "🔍", titulo: "Inspetor de projetos", dica: "Abra todos os projetos." },
     { id: "moedas", icone: "🪙", titulo: "Caçador de moedas", dica: "Ache as 5 moedas escondidas pelo site." },

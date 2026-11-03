@@ -1786,6 +1786,11 @@ a { color: inherit; }
 
 /* ---------- Responsivo ---------- */
 @media (max-width: 1000px) {
+/* ---------- Página 404 (gerar-blog.js) ---------- */
+.fase-perdida { min-height: 55vh; }
+.fase-perdida-vidas { margin-bottom: 18px; font-size: 1.5rem; letter-spacing: 0.15em; }
+.fase-perdida .acoes { margin-top: 28px; }
+
   .so-largo { display: none; }
   .servicos { grid-template-columns: repeat(2, 1fr); }
   .etapas { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
