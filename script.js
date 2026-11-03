@@ -924,7 +924,7 @@
     const n = contarSecretas();
     const total = SECRETAS.length;
     $("hud-num").textContent = `${n}/${total}`;
-    hud.setAttribute("aria-label", `Suas conquistas: ${n} de ${total}`);
+    hud.setAttribute("aria-label", `Suas conquistas: ${n}/${total}`);
     $("rodape-dica").innerHTML =
       n === 0
         ? "Tem conquista escondida por aqui."
@@ -1213,9 +1213,14 @@
   let meusCliques = 0;
   let enviando = false;
 
+  function escreverLikes(n) {
+    numeroLike.textContent = n.toLocaleString("pt-BR");
+    botaoLike.setAttribute("aria-label", `Curtir o site: ${numeroLike.textContent} curtidas`);
+  }
+
   function mostrarLikes() {
     if (totalServidor === null && pendentes === 0) return;
-    numeroLike.textContent = ((totalServidor ?? 0) + pendentes).toLocaleString("pt-BR");
+    escreverLikes((totalServidor ?? 0) + pendentes);
   }
 
   async function buscarLikes() {
@@ -1226,7 +1231,7 @@
       totalServidor = (await r.json()).total;
       mostrarLikes();
     } catch {
-      if (totalServidor === null) numeroLike.textContent = pendentes.toLocaleString("pt-BR");
+      if (totalServidor === null) escreverLikes(pendentes);
     }
   }
 

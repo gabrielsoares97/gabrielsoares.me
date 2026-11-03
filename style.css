@@ -603,6 +603,7 @@ a { color: inherit; }
   margin-bottom: 32px;
 }
 .secao-cabeca > p { color: var(--tinta-suave); max-width: 46ch; }
+.secao-cabeca .botao-link { margin-left: 0; white-space: nowrap; }
 
 /* Rótulo de fase acima dos títulos ("Mundo 1-2"), com um bloquinho de moeda */
 .olho {
@@ -1102,7 +1103,7 @@ a { color: inherit; }
   padding: clamp(56px, 8vw, 96px) var(--gutter);
   text-align: center;
 }
-.contato > p:not(.olho) { margin-top: 12px; color: var(--tinta-suave); font-size: 1.15rem; }
+.contato > p:not(.olho) { margin-top: 12px; color: var(--tinta-suave); font-size: 1.15rem; text-wrap: balance; }
 .contato .olho { justify-content: center; }
 
 .botao.grande { padding: 18px 30px; font-size: 1.2rem; box-shadow: var(--sombra-grande); }
@@ -1110,7 +1111,7 @@ a { color: inherit; }
 .botao svg { flex: none; width: 18px; height: auto; fill: currentColor; }
 .botao.grande svg { width: 22px; }
 
-.contato > .contato-ou { margin-top: 48px; font-size: 1rem; }
+.contato > p.contato-ou { margin-top: 48px; font-size: 1rem; }
 .contato-email {
   display: flex;
   flex-wrap: wrap;
@@ -1199,6 +1200,7 @@ a { color: inherit; }
   text-decoration-color: var(--moeda);
   text-decoration-thickness: 0.18em;
   text-underline-offset: 0.12em;
+  text-decoration-skip-ink: none; /* a linha segue inteira, sem falhar embaixo do @ */
   overflow-wrap: anywhere;
 }
 .email-grande:hover { text-decoration-color: var(--cereja); }
@@ -1784,13 +1786,13 @@ a { color: inherit; }
 .aviso-cookies-acoes { display: flex; gap: 10px; margin-top: 8px; }
 .aviso-cookies-acoes .botao { flex: 1; justify-content: center; }
 
-/* ---------- Responsivo ---------- */
-@media (max-width: 1000px) {
 /* ---------- Página 404 (gerar-blog.js) ---------- */
 .fase-perdida { min-height: 55vh; }
 .fase-perdida-vidas { margin-bottom: 18px; font-size: 1.5rem; letter-spacing: 0.15em; }
 .fase-perdida .acoes { margin-top: 28px; }
 
+/* ---------- Responsivo ---------- */
+@media (max-width: 1000px) {
   .so-largo { display: none; }
   .servicos { grid-template-columns: repeat(2, 1fr); }
   .etapas { grid-template-columns: repeat(2, 1fr); row-gap: 40px; }
@@ -1833,6 +1835,12 @@ a { color: inherit; }
   #jornada .moeda-escondida { left: 19px; }
   .terminal-botao { display: block; margin: 6px 0 0; }
   .terminal-botao + .botao-link { margin-left: 0; } /* "Privacidade", alinhado embaixo do terminal */
+  /* Área de toque confortável nos links do rodapé */
+  .terminal-botao,
+  .terminal-botao + .botao-link { display: block; width: fit-content; padding-block: 5px; }
+  /* O aviso de cookies cobre menos da primeira tela */
+  .aviso-cookies { gap: 6px; padding: 14px 16px 16px; font-size: 0.9rem; }
+  .aviso-cookies-acoes .botao { padding: 10px 14px; }
   .stats dd { font-size: 1rem; }
   .pergunta summary { padding: 14px 16px; font-size: 1.02rem; }
   .pergunta-resposta { padding: 0 16px 16px; }
