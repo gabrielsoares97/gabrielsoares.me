@@ -23,6 +23,7 @@ const GERADO = "<!-- Gerado pelo gerar-blog.js a partir da pasta posts/. Edite o
 const NOME_BLOG = "Diário de bordo";
 const INTRO_BLOG = "Dicas práticas para colocar a sua empresa na internet: sites, Google e Instagram, explicados sem complicação.";
 
+const IMAGEM_COMPARTILHAR = `${SITE}/logo/compartilhar.png`;
 const D = vm.runInNewContext(`${fs.readFileSync(path.join(PASTA, "dados.js"), "utf8")}\nDADOS;`);
 const NOME = `${D.nome} ${D.sobrenome}`.trim();
 const indexHtml = fs.readFileSync(path.join(PASTA, "index.html"), "utf8");
@@ -219,10 +220,10 @@ ${GERADO}
   <meta property="og:url" content="${url}">
   <meta property="og:title" content="${esc(titulo)}">
   <meta property="og:description" content="${esc(descricao)}">
-  <meta property="og:image" content="${SITE}/logo/gabriel-soares-lockup.png">
+  <meta property="og:image" content="${IMAGEM_COMPARTILHAR}">
   <meta property="og:image:width" content="1200">
-  <meta property="og:image:height" content="500">
-  <meta property="og:image:alt" content="Logo ${esc(NOME)}">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="${esc(NOME)}: sites, sistemas e apps para a sua empresa">
   <meta name="twitter:card" content="summary_large_image">${extraHead}
   <link rel="alternate" type="application/rss+xml" title="${NOME_BLOG} | ${esc(NOME)}" href="${SITE}/blog/feed.xml">
 
@@ -230,7 +231,7 @@ ${GERADO}
 ${jsonLd(dados)}
   </script>
   <link rel="icon" type="image/png" sizes="48x48" href="${raiz}logo/favicon.png">
-  <link rel="apple-touch-icon" href="${raiz}logo/favicon.png">
+  <link rel="apple-touch-icon" href="${raiz}logo/apple-touch-icon.png">
   <link rel="preload" href="${raiz}fontes/bricolage-grotesque.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="preload" href="${raiz}fontes/figtree.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="${raiz}style.css?v=${VERSAO}">
@@ -380,7 +381,7 @@ ${
           inLanguage: "pt-BR",
           url,
           mainEntityOfPage: url,
-          image: `${SITE}/logo/gabriel-soares-lockup.png`,
+          image: IMAGEM_COMPARTILHAR,
           author: PESSOA,
           publisher: PESSOA,
           isPartOf: BLOG,
