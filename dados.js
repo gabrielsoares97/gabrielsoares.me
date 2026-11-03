@@ -12,11 +12,11 @@ const DADOS = {
   projetosEntregues: "+20", // total de projetos entregues, mostrado na ficha do hero
 
   resumo:
-    "Crio sites, sistemas e apps que funcionam de verdade, do banco de dados ao último pixel. Aqui estão as coisas que construí e as conquistas que desbloqueei pelo caminho.",
+    "Crio sites, sistemas e apps que funcionam de verdade, para empresas de Balneário Piçarras e região. Você fala direto comigo, do primeiro orçamento até o projeto no ar.",
 
   // Use *assim* para deixar uma palavra em itálico.
   sobre: [
-    "Sou o Gabriel, desenvolvedor full-stack em Balneário Piçarras. Desde 2021, coloquei no ar mais de 20 sites, um sistema de gestão para a JBL Transportes e três aplicativos próprios.",
+    "Sou o Gabriel, desenvolvedor full-stack em Balneário Piçarras. Desde 2021, coloquei no ar mais de 20 sites, um sistema de gestão para a JBL Transportes e quatro aplicativos próprios.",
     "Antes de *codar*, trabalhei com tráfego pago e design. Por isso não penso só no código: penso em quem vai visitar o seu site, no que faz essa pessoa confiar em você e no que a leva a chamar no WhatsApp.",
     "Você fala direto comigo, do primeiro orçamento até o projeto no ar. Quase tudo o que sei aprendi na prática, resolvendo problemas de verdade. Nas horas vagas, estou aprendendo a criar jogos, o que explica as conquistas (e a fase bônus) espalhadas por aqui.",
   ],
